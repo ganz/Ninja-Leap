@@ -106,38 +106,12 @@ Game.prototype.movePlayer = function() {
     if (this.keyMap[KEYS.D]) this.player.position.x += moveSpeed;
 };
 
-Game.prototype.drawEnemy = function(context, x, y, width, fillColor) {
-    context.strokeStyle = "#000000";
-    if (fillColor) {
-	context.fillStyle = fillColor;
-    } else {
-	context.fillStyle = "#333";
-    }
-    context.beginPath();
-    context.arc(x,y,width,0,Math.PI*2,true);
-    context.lineWidth = 2
-    context.closePath();
-    context.stroke();
-    context.fill();
-};
-
 Game.prototype.drawVillage = function(context) {
     context.strokeStyle = "#5C4033";
     context.fillStyle = "#855E42";
     context.beginPath();
     context.arc(320, 240,60,0,Math.PI*2,true);
     context.lineWidth = 3
-    context.closePath();
-    context.stroke();
-    context.fill();
-};
-
-Game.prototype.drawPlayer = function(context) {
-    context.strokeStyle = "#000000";
-    context.fillStyle = "#733";
-    context.beginPath();
-    context.arc(this.player.position.x,this.player.position.y,10,0,Math.PI*2,true);
-    context.lineWidth = 2
     context.closePath();
     context.stroke();
     context.fill();
@@ -164,7 +138,7 @@ Game.prototype.draw = function() {
 
     for (var i = 0; i < this.allies.length; i++) {
 	var ally = this.allies[i];
-	this.drawEnemy(context, ally.position.x, ally.position.y, 10, "#77D");	    
+	ally.draw(context, ally.position.x, ally.position.y, 10, "#77D");	    
     }
 
     for (var i = 0; i < this.enemies.length; i++) {
@@ -179,17 +153,16 @@ Game.prototype.draw = function() {
 	    if (y < -enemy.size) y = 0;
 	    if (x > 640 + enemy.size) x = 640;
 	    if (y > 480 + enemy.size) y = 480;
-	    this.drawEnemy(context, x, y, 10, "#F00");
+	    enemy.draw(context, x, y, 10, "#F00");
 	} else {
-	    this.drawEnemy(context, enemy.position.x, enemy.position.y, 10);
+	    enemy.draw(context, enemy.position.x, enemy.position.y, 10);
 	}
     }
 
     context.fillStyle = "#000";
     context.font = "bold 16px sans-serif";
     context.fillText("Honor: " + this.score, 10, 20);
-
-    this.drawPlayer(context);
+    this.player.draw(context);
 
     if (this.gameover) {
 	context.fillStyle = "#FFF";
