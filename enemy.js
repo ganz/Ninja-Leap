@@ -22,3 +22,12 @@ Enemy.prototype.draw = function(context, x, y, width, fillColor) {
     context.fill();
 };
 
+function Ally(x, y) {
+    this.position = new Position(x, y);
+    this.size = 10;
+};
+
+Ally.prototype.tick = function() {
+};
+
+Ally.prototype.draw = Enemy.prototype.draw;
