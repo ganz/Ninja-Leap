@@ -44,6 +44,16 @@ Ninja.prototype.tick = function() {
 	    if (dist <= (this.size + enemy.size + SLASH_WIDTH)) {
 		game.enemies.splice(i, 1);
 		i--;
+		game.score++;
+	    }
+	};
+	for (var i = 0; i < game.allies.length; i++) {
+	    var ally = game.allies[i];
+	    var dist = this.position.dist(ally.position);
+	    if (dist <= (this.size + ally.size)) {
+		game.allies.splice(i, 1);
+		i--;
+		game.score++;
 	    }
 	};
     }
