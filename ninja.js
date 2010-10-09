@@ -23,7 +23,16 @@ Position.prototype.moveTowards = function(position, magnitude) {
 function Ninja(x, y) {
     this.position = new Position(x, y);
     this.dashPosition = null;
-    this.size = 10;
+    this.size = 24;
+
+    this.frames = [];
+    this.frames[0] = new Image();
+    this.frames[0].src = "images/ninja1.gif";
+    this.frames[1] = new Image();
+    this.frames[1].src = "images/ninja2.gif";
+    this.frameIndex = 0;
+    this.frameLength = 200;
+    this.time = new Date().getTime();
 };
 
 Ninja.prototype.dash = function(position) {
@@ -48,3 +57,27 @@ Ninja.prototype.tick = function() {
 	};
     }
 };
+
+Ninja.prototype.draw = function(context) {
+    var cornerX = this.position.x - this.size / 2;
+    var cornerY = this.position.y - this.size / 2;
+    context.drawImage(this.frames[this.frameIndex], cornerX, cornerY, this.size, this.size);
+    
+    var newTime = new Date().getTime();
+    if (newTime - this.time >= this.frameLength) {
+	this.frameIndex = (this.frameIndex + 1) % this.frames.length;
+	this.time = newTime;
+    }
+
+    /*
+    context.strokeStyle = "#000000";
+    context.fillStyle = "#733";
+    context.beginPath();
+    context.arc(this.position.x,this.position.y,10,0,Math.PI*2,true);
+    context.lineWidth = 2
+    context.closePath();
+    context.stroke();
+    context.fill();
+    */
+};
+
