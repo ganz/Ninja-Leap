@@ -15,10 +15,13 @@ function Game() {
     this.allies = [];
     this.score = 0;
 
-    this.allies.push(new Ally(300, 250));
-    this.allies.push(new Ally(330, 230));
-    this.allies.push(new Ally(350, 260));
-    this.allies.push(new Ally(320, 270));
+    this.allies.push(new Ally(300, 240));
+    this.allies.push(new Ally(295, 210));
+    this.allies.push(new Ally(295, 275));
+    this.allies.push(new Ally(330, 220));
+    this.allies.push(new Ally(350, 250));
+    this.allies.push(new Ally(320, 260));
+
 
     // map of keycodes, either missing or "true" if currently pressed down
     this.keyMap = {};
@@ -118,6 +121,17 @@ Game.prototype.drawEnemy = function(context, x, y, width, fillColor) {
     context.fill();
 };
 
+Game.prototype.drawVillage = function(context) {
+    context.strokeStyle = "#5C4033";
+    context.fillStyle = "#855E42";
+    context.beginPath();
+    context.arc(320, 240,60,0,Math.PI*2,true);
+    context.lineWidth = 3
+    context.closePath();
+    context.stroke();
+    context.fill();
+};
+
 Game.prototype.drawPlayer = function(context) {
     context.strokeStyle = "#000000";
     context.fillStyle = "#733";
@@ -138,12 +152,15 @@ Game.prototype.draw = function() {
 
     context.fillStyle = "#A78D84";
 
+    // Clear canvas
     var canvasWidth = canvas.offsetWidth;
     var canvasHeight = canvas.offsetHeight;
     context.fillRect(0,
 		     0,
 		     canvasWidth,
 		     canvasHeight);
+
+    this.drawVillage(context);
 
     for (var i = 0; i < this.allies.length; i++) {
 	var ally = this.allies[i];
