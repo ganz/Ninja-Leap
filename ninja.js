@@ -28,6 +28,7 @@ function Ninja(x, y) {
 
 Ninja.prototype.dash = function(position) {
     this.dashPosition = position;
+    this.position.moveTowards(this.dashPosition, PLAYER_DASH_SPEED)
 };
 
 Ninja.prototype.tick = function() {

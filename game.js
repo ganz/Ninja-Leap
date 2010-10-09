@@ -197,8 +197,8 @@ Game.prototype.init = function() {
 	thiz.keyMap[event.keyCode] = false;
     }
 
-    document.onclick = function(event) {
-	thiz.player.dashPosition = new Position(event.x, event.y);
+    document.onmousedown = function(event) {
+	thiz.player.dash(new Position(event.x, event.y));
     }
 
     setInterval(function() { thiz.tick() }, 1000 / 60);
