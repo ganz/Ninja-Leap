@@ -185,6 +185,10 @@ Game.prototype.draw = function() {
 	}
     }
 
+    context.fillStyle = "#000";
+    context.font = "bold 16px sans-serif";
+    context.fillText("Honor: " + this.score, 10, 20);
+
     this.drawPlayer(context);
 
     if (this.gameover) {
