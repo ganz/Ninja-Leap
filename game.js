@@ -121,7 +121,6 @@ Game.prototype.draw = function() {
 
     for (var i = 0; i < this.enemies.length; i++) {
 	var enemy = this.enemies[i];
-	console.info(enemy.position.x, enemy.position.y);
 	if (enemy.position.x < -enemy.size ||
 	    enemy.position.y < -enemy.size ||
 	    enemy.position.x > 640 + enemy.size ||
