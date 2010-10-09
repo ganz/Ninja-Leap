@@ -141,7 +141,10 @@ Game.prototype.draw = function() {
 
     if (this.gameover) {
 	context.fillStyle = "#FFF";
-	context.fillText("You have shamed ninja kind!", 10, 10);
+	context.font = "bold 32px sans-serif";
+	context.fillText("You have shamed ninja kind!", 100, 200);
+	context.font = "bold 22px sans-serif";
+	context.fillText("[reload to play again]", 220, 250);
     }
 };
 
