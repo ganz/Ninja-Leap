@@ -30,6 +30,7 @@ Game.prototype.init = function() {
 
 Game.prototype.tick = function() {
     if (this.gameover) {
+	this.draw();
 	return;
     }
     this.ticks++;
@@ -180,9 +181,9 @@ Game.prototype.draw = function() {
 	    context.fillText(this.gameoverReason, 100, 200);
 	}
 
-	context.fillText("Your honor score was: " + this.score, 100, 250);
+	context.fillText("Your honor score was: " + this.score, 100, 230);
 
-	context.fillText("[reload to play again]", 100, 300);
+	context.fillText("[reload to play again]", 100, 260);
     }
 };
 
