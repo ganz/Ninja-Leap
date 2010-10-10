@@ -120,11 +120,12 @@ Ninja.prototype.tick = function() {
 		    game.fadingMessages.push(
 			new FadingMessage("+" + this.comboCounter + " honor",
 					  12 + this.comboCounter * 2,
-					  game.ticks + TICKS_PER_SECOND * 1, 
+					  game.ticks + TICKS_PER_SECOND * 1.5, 
 					  new Position(enemy.position.x - enemy.size / 2,
 						       enemy.position.y + enemy.size / 4),
-					  "#FC0",
-					  true));
+					  "#833",
+					  true,
+					  4));
 		}
 	    }
 	};
@@ -136,6 +137,16 @@ Ninja.prototype.tick = function() {
 		game.allies.splice(i, 1);
 		i--;
 		game.gameMode.tempScore--;
+
+		game.fadingMessages.push(
+		    new FadingMessage("-1 honor",
+				      16,
+				      game.ticks + TICKS_PER_SECOND * 1.5, 
+				      new Position(ally.position.x - ally.size / 2,
+						   ally.position.y + ally.size / 4),
+				      "#833",
+				      true,
+				      4));
 	    }
 	};
     }

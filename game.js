@@ -556,13 +556,14 @@ GameMode.prototype.tick = function() {
 };
 
 
-function FadingMessage(msg, size, expiration, position, color, shadow) {
+function FadingMessage(msg, size, expiration, position, color, shadow, shadowBlur) {
     this.msg = msg;
     this.size = size;
     this.expiration = expiration;
     this.position = position;
     this.color = color;
     this.shadow = shadow
+    this.shadowBlur = shadowBlur;
 };
 
 FadingMessage.prototype.draw = function(context) {
@@ -573,7 +574,7 @@ FadingMessage.prototype.draw = function(context) {
     if (this.shadow) {
 	context.shadowOffsetX = 0;
 	context.shadowOffsetY = 0;
-	context.shadowBlur = 10;
+	context.shadowBlur = this.shadowBlur ? this.shadowBlur : 10;
 	context.shadowColor = '#555';
     }
 
