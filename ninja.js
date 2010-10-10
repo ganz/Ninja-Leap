@@ -17,6 +17,18 @@ Position.prototype.saveState = function() {
     this.prevY = this.y;
 }
 
+Position.prototype.minDistFromEdge = function() {
+    var xLeft = this.x;
+    var xRight = 640 - this.x
+
+    var yTop = this.y;
+    var yBot = 480 - this.y;
+
+    var xMax = Math.max(xLeft, xRight);
+    var yMax = Math.max(yTop, yBot);
+    return Math.max(xMax, yMax);
+};
+
 Position.prototype.move = function(xDist, yDist) {
     this.saveState();
     this.x += xDist;
@@ -37,9 +49,13 @@ Position.prototype.moveTowards = function(position, magnitude) {
     var dy = position.y - this.y;
 
     var dist = Math.sqrt(dx * dx + dy * dy);
-    this.x = this.x + (magnitude / dist) * dx;
-    this.y = this.y + (magnitude / dist) * dy;
-
+    if (dist > magnitude) {
+	this.x = this.x + (magnitude / dist) * dx;
+	this.y = this.y + (magnitude / dist) * dy;
+    } else {
+	this.x = position.x;
+	this.y = position.y;
+    }
     if (this.x < this.prevX) {
 	this.facing = 0;
     }
