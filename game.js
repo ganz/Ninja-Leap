@@ -36,7 +36,7 @@ Game.prototype.setHighScores = function(scores) {
 Game.prototype.loadHighScores = function() {
     var scoresString = localStorage.getItem("highscores");
     if (!scoresString) {
-	var oldScores = [["decent ninja", 12], ["bad ninja", 4]];
+	var scoresString = [["decent ninja", 12], ["bad ninja", 4]];
     }
 
     var scores = []
