@@ -126,24 +126,13 @@ Ninja.prototype.tick = function() {
 };
 
 Ninja.prototype.draw = function(context) {
-    var cornerX = this.position.x - this.size;
-    var cornerY = this.position.y - this.size;
-    if (this.position.facing == 1) {
-	context.drawImage(this.frames[this.frameIndex], cornerX, cornerY,
-			  this.size * 2, this.size * 2);
-    } else if (this.position.facing == 0) {
-	context.drawImage(this.lframes[this.frameIndex], cornerX, cornerY,
-			  this.size * 2, this.size * 2);
-    }
-    
-    var newTime = new Date().getTime();
-    if (newTime - this.time >= this.frameLength) {
-	this.frameIndex = (this.frameIndex + 1) % this.frames.length;
-	this.time = newTime;
-    }
-
     // Draw three sweet motion trails
     if (this.dashPosition) {
+	context.shadowOffsetX = 0;
+	context.shadowOffsetY = 0;
+	context.shadowBlur = 10;
+	context.shadowColor = "white";
+
 	var dx = this.position.x - this.dashPosition.x;
 	var dy = this.position.y - this.dashPosition.y;
 	var dist = this.position.dist(this.dashPosition);
@@ -187,5 +176,23 @@ Ninja.prototype.draw = function(context) {
 	
 	context.fill();
 	context.globalAlpha = 1.0;
+	context.shadowColor = "transparent";
+    }
+
+    // draw dude on top of motion lines
+    var cornerX = this.position.x - this.size;
+    var cornerY = this.position.y - this.size;
+    if (this.position.facing == 1) {
+	context.drawImage(this.frames[this.frameIndex], cornerX, cornerY,
+			  this.size * 2, this.size * 2);
+    } else if (this.position.facing == 0) {
+	context.drawImage(this.lframes[this.frameIndex], cornerX, cornerY,
+			  this.size * 2, this.size * 2);
+    }
+    
+    var newTime = new Date().getTime();
+    if (newTime - this.time >= this.frameLength) {
+	this.frameIndex = (this.frameIndex + 1) % this.frames.length;
+	this.time = newTime;
     }
 };

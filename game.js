@@ -30,6 +30,7 @@ Game.prototype.init = function() {
     level.title = "Day One";
     level.description = "Fight!";
     level.targetHonor = 5;
+    level.archerShootRate = TICKS_PER_SECOND * 2;
     level.enemySpawnRate = TICKS_PER_SECOND * 4;
     this.levels.push(level);
 
@@ -37,6 +38,7 @@ Game.prototype.init = function() {
     level.title = "Day Two";
     level.description = "Fight harder!";
     level.targetHonor = 10;
+    level.archerShootRate = TICKS_PER_SECOND;
     level.enemySpawnRate = TICKS_PER_SECOND * 2;
     this.levels.push(level);
 
@@ -44,6 +46,7 @@ Game.prototype.init = function() {
     level.title = "Day Three";
     level.description = "Fight!  Do it!";
     level.targetHonor = 20;
+    level.archerShootRate = TICKS_PER_SECOND * 0.5;
     level.enemySpawnRate = TICKS_PER_SECOND;
     this.levels.push(level);
 
@@ -51,6 +54,7 @@ Game.prototype.init = function() {
     level.title = "Day Four";
     level.description = "Finish him!  And him!"
     level.targetHonor = 40;
+    level.archerShootRate = TICKS_PER_SECOND * 0.25;
     level.enemySpawnRate = TICKS_PER_SECOND * 0.8;
     this.levels.push(level);
 
@@ -58,6 +62,7 @@ Game.prototype.init = function() {
     level.title = "Last Day";
     level.description = "Time to flip out!";
     level.targetHonor = 60;
+    level.archerShootRate = TICKS_PER_SECOND * 0.125;
     level.enemySpawnRate = TICKS_PER_SECOND * 0.6;
     this.levels.push(level);
 
@@ -350,7 +355,8 @@ GameMode.prototype.tick = function() {
 	}
     }
 
-    if (game.ticks % (TICKS_PER_SECOND / 2) == 0 && game.enemies.length > 0) {
+    if (game.ticks % game.levels[game.levelIndex].archerShootRate == 0 &&
+	game.enemies.length > 0) {
 	var ally = game.allies[parseInt(Math.random() * game.allies.length)];
 
 	var nearestDist = 9999999;
