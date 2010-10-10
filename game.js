@@ -100,10 +100,10 @@ Game.prototype.movePlayer = function() {
 	moveSpeed *= 1 / Math.sqrt(2);
     }
 
-    if (this.keyMap[KEYS.W]) this.player.position.y -= moveSpeed;
-    if (this.keyMap[KEYS.A]) this.player.position.x -= moveSpeed;
-    if (this.keyMap[KEYS.S]) this.player.position.y += moveSpeed;
-    if (this.keyMap[KEYS.D]) this.player.position.x += moveSpeed;
+    if (this.keyMap[KEYS.W]) this.player.position.move(0, -moveSpeed);
+    if (this.keyMap[KEYS.A]) this.player.position.move(-moveSpeed, 0);
+    if (this.keyMap[KEYS.S]) this.player.position.move(0, moveSpeed);
+    if (this.keyMap[KEYS.D]) this.player.position.move(moveSpeed, 0);
 };
 
 Game.prototype.drawVillage = function(context) {
