@@ -220,10 +220,10 @@ GameOverMode.prototype.draw = function() {
 
     context.fillStyle = "#FFF";
     context.font = "bold 32px sans-serif";
-    context.shadowOffsetX = 0;
-    context.shadowOffsetY = 0;
-    context.shadowBlur = 10;
-    context.shadowColor = "#555";
+//    context.shadowOffsetX = 0;
+//    context.shadowOffsetY = 0;
+//    context.shadowBlur = 10;
+//    context.shadowColor = "#555";
     context.fillText("You have shamed ninja kind!", 160, 80);
 
     context.font = "bold 22px sans-serif";
@@ -280,15 +280,13 @@ GameMode.prototype.init = function() {
 			  32,
 			  game.ticks + TICKS_PER_SECOND * 2, 
 			  new Position(220, 100),
-			  "#FFF",
-			  true));
+			  "#FFF"));
     game.fadingMessages.push(
 	new FadingMessage(game.levels[game.levelIndex].description, 
 			  24,
 			  game.ticks + TICKS_PER_SECOND * 2, 
 			  new Position(220, 130),
-			  "#FFF",
-			  true));
+			  "#FFF"));
 };
 
 GameMode.prototype.draw = function() {
@@ -355,7 +353,7 @@ GameMode.prototype.draw = function() {
     }
 
 
-    context.fillStyle = "#000";
+    context.fillStyle = "#FFF";
     context.font = "bold 16px sans-serif";
     context.fillText("Honor: " + (game.score + this.tempScore), 10, 20);
     context.fillText("Enemies left: " +  (game.levels[game.levelIndex].neededKills - this.kills),

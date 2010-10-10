@@ -150,6 +150,19 @@ Ninja.prototype.tick = function() {
 	    }
 	};
     }
+
+    if (this.position.x - this.size < 0) this.position.x = this.size;
+    if (this.position.y - this.size < 0) this.position.y = this.size;
+
+    if (this.position.y + this.size > 480) {
+	this.dashPosition = null;
+	this.position.y = 480 - this.size;
+    }
+
+    if (this.position.x + this.size > 640) {
+	this.dashPosition = null;
+	this.position.x = 640 - this.size;
+    }
 };
 
 Ninja.prototype.draw = function(context) {
