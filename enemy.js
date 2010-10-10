@@ -80,7 +80,6 @@ Barbar.prototype.draw = function(context, x, y, width, fillColor) {
 // returns true if dead, false if not dead
 Barbar.prototype.hit = function(hitter, dashIndex) {
     if (hitter == "player" && dashIndex > this.lastDashHitBy) {
-	console.log("BARBAR HIT BY DASH " + dashIndex);
 	this.hitpoints--;
 	this.lastDashHitBy = dashIndex;
     }
