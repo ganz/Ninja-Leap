@@ -10,6 +10,8 @@ PLAYER_DASH_SPEED = 10;
 PLAYER_MOVE_SPEED = 4;
 ENEMY_MOVE_SPEED = 2;
 
+TICKS_PER_SECOND = 60;
+
 function Game() {
     this.player = new Ninja(200, 200);
 
@@ -39,7 +41,7 @@ Game.prototype.init = function() {
 	thiz.player.dash(new Position(event.x, event.y));
     }
 
-    setInterval(function() { thiz.tick() }, 1000 / 60);
+    setInterval(function() { thiz.tick() }, 1000 / TICKS_PER_SECOND);
 };
 
 function TitleMode() {
@@ -114,6 +116,7 @@ GameMode.prototype.init = function() {
     game.score = 0;
     game.gameover = false;
     game.player.dashPosition = null;
+    game.ticks = 0;
 
     game.allies.push(new Ally(300, 240));
     game.allies.push(new Ally(295, 210));
@@ -121,6 +124,7 @@ GameMode.prototype.init = function() {
     game.allies.push(new Ally(330, 220));
     game.allies.push(new Ally(350, 250));
     game.allies.push(new Ally(320, 260));
+    this.spawnEnemy();
 };
 
 GameMode.prototype.draw = function() {
@@ -157,31 +161,55 @@ GameMode.prototype.draw = function() {
     game.player.draw(context);
 };
 
+GameMode.prototype.spawnEnemy = function() {
+    var x = -1;
+    var y = -1;
+
+    // Occasionally spawn enemies
+    if (Math.random() > 0.5) {
+	// generating on top or bottom
+	x = (Math.random() > 0.5) ? -100 : 640 + 100;
+	y = Math.random() * 480;
+    } else {
+	// generating on left or right
+	// generating on top or bottom
+	y = (Math.random() > 0.5) ? -100 : 480 + 100;
+	x = Math.random() * 640;
+    }
+
+    var enemy = new Enemy(x, y);
+    game.enemies.push(enemy);
+};
+
+GameMode.prototype.elapsedSeconds = function() {
+    return game.ticks / TICKS_PER_SECOND;
+};
+
+GameMode.prototype.spawnRate = function() {
+    if (game.score < 1) return TICKS_PER_SECOND * 5;
+    if (game.score < 10) return TICKS_PER_SECOND * 1.5;
+    if (game.score < 30) return TICKS_PER_SECOND * 1.2;
+    if (game.score < 60) return TICKS_PER_SECOND;
+    if (game.score < 90) return TICKS_PER_SECOND * 0.8;
+    if (game.score < 200) return TICKS_PER_SECOND * 0.6;
+    return TICKS_PER_SECOND * 0.4;
+};
+
 GameMode.prototype.tick = function() {
     if (game.gameover) {
 	game.activeMode = game.gameOverMode;
 	return;
     }
     game.ticks++;
-    var x = -1;
-    var y = -1;
-    // Occasionally spawn enemies
-    if (game.ticks % 50 == 0) {
-	if (Math.random() > 0.5) {
-	    // generating on top or bottom
-	    x = (Math.random() > 0.5) ? -100 : 640 + 100;
-	    y = Math.random() * 480;
-	} else {
-	    // generating on left or right
-	    // generating on top or bottom
-	    y = (Math.random() > 0.5) ? -100 : 480 + 100;
-	    x = Math.random() * 640;
-	}
-
-	var enemy = new Enemy(x, y);
-	game.enemies.push(enemy);
+    if (game.ticks % this.spawnRate() == 0) {
+	this.spawnEnemy();
     }
-
+    // Spawn N extra enemies every 3 seconds
+    if (game.ticks % (TICKS_PER_SECOND * 20) == 0) {
+	for(var i = 0; i < 4; i++) {
+	    this.spawnEnemy()
+	}
+    }
     game.movePlayer();
 
     for (var i = 0; i < game.enemies.length; i++) {
