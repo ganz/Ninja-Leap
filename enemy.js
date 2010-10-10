@@ -84,6 +84,7 @@ Arrow.prototype.tick = function() {
 };
 
 Arrow.prototype.draw = function(context, x, y) {    
+    context.lineWidth = 1
     context.globalAlpha = 1 - this.age / 600;
     context.strokeStyle = "#000000";
     context.fillStyle = "#333";
@@ -96,7 +97,6 @@ Arrow.prototype.draw = function(context, x, y) {
     context.stroke();
 
     context.arc(this.target.x,this.target.y,2,0,Math.PI*2,true);
-    context.lineWidth = 1
     context.fill();
     context.globalAlpha = 1.0;
 };

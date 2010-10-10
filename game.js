@@ -6,7 +6,7 @@ KEYS.D = 68;
 KEYS.ENTER = 13;
 
 PLAYER_COLLISION_SAFETY = 3;
-PLAYER_DASH_SPEED = 10;
+PLAYER_DASH_SPEED = 15;
 PLAYER_MOVE_SPEED = 4;
 ENEMY_MOVE_SPEED = 2;
 
@@ -25,11 +25,47 @@ function Game() {
 };
 
 Game.prototype.init = function() {
+    this.levels = [];
+    var level = new Level();
+    level.title = "Day One";
+    level.description = "Fight!";
+    level.targetHonor = 5;
+    level.enemySpawnRate = TICKS_PER_SECOND * 4;
+    this.levels.push(level);
+
+    level = new Level();
+    level.title = "Day Two";
+    level.description = "Fight harder!";
+    level.targetHonor = 10;
+    level.enemySpawnRate = TICKS_PER_SECOND * 2;
+    this.levels.push(level);
+
+    level = new Level();
+    level.title = "Day Three";
+    level.description = "Fight!  Do it!";
+    level.targetHonor = 20;
+    level.enemySpawnRate = TICKS_PER_SECOND;
+    this.levels.push(level);
+
+    level = new Level();
+    level.title = "Day Four";
+    level.description = "Finish him!  And him!"
+    level.targetHonor = 40;
+    level.enemySpawnRate = TICKS_PER_SECOND * 0.8;
+    this.levels.push(level);
+
+    level = new Level();
+    level.title = "Last Day";
+    level.description = "Time to flip out!";
+    level.targetHonor = 60;
+    level.enemySpawnRate = TICKS_PER_SECOND * 0.6;
+    this.levels.push(level);
+
+    this.levelIndex = 0;
     this.loadSound("dash.mp3", 10);
     this.loadSound("enemyDeath.mp3", 10);
     this.loadSound("villagerDeath.mp3", 10);
     this.loadSound("arrow.mp3", 20);
-
 
     this.titleMode = new TitleMode();
     this.titleMode.init();
@@ -37,6 +73,8 @@ Game.prototype.init = function() {
 
     this.gameMode = new GameMode();
     this.gameOverMode = new GameOverMode();
+
+    this.winMode = new WinMode();
 
     var thiz = this;
     document.onkeydown = function(event) {
@@ -55,6 +93,9 @@ Game.prototype.init = function() {
     setInterval(function() { thiz.tick() }, 1000 / TICKS_PER_SECOND);
 };
 
+function Level() {
+}
+
 Game.prototype.loadSound = function(filename) {
     document["PlaySound"].loadSound(filename);
 };
@@ -62,6 +103,35 @@ Game.prototype.loadSound = function(filename) {
 Game.prototype.playSound = function(filename) {
     document["PlaySound"].playSound(filename);
 }
+
+function WinMode() {
+}
+
+WinMode.prototype.init = function() {
+    game.player.x = 300;
+    game.player.y = 200;
+};
+
+WinMode.prototype.draw = function() {
+    var context = game.getContext();
+    game.drawBackground(context);
+
+    context.fillStyle = "#FFF";
+    context.font = "bold 48px sans-serif";
+    context.fillText("YOU WIN", 100, 150);
+
+    context.font = "bold 22px sans-serif";
+
+    context.fillText("You are the greatest ninja ever.", 100, 230);
+    context.fillText("You have eternal honor.", 100, 260);
+    context.fillText("The villagers apologize for the arrows.", 100, 290);
+
+    game.player.draw(context);
+};
+
+WinMode.prototype.tick = function() {
+    this.draw();
+};
 
 function TitleMode() {
 };
@@ -118,7 +188,7 @@ GameOverMode.prototype.draw = function() {
     }
 
     context.fillText("Your honor score was: " + game.score, 100, 230);
-    context.fillText("Press [enter] to play again]", 100, 290);
+    context.fillText("Press [enter] to play again", 100, 290);
     context.shadowColor = "transparent";
 };
 
@@ -150,6 +220,8 @@ GameMode.prototype.init = function() {
     game.allies.push(new Ally(340, 200));
     game.allies.push(new Ally(355, 230));
 
+
+    this.showLevelInfoExpiration = TICKS_PER_SECOND * 3;
     this.superSpawnThreshold = 20;
     this.spawnEnemy();
 };
@@ -187,9 +259,19 @@ GameMode.prototype.draw = function() {
 	}
     }
 
+    if (game.ticks < this.showLevelInfoExpiration && game.activeMode == this) {
+	context.fillStyle = "#FFF";
+	context.font = "bold 32px sans-serif";
+	context.fillText(game.levels[game.levelIndex].title, 100, 170);	
+
+	context.font = "bold 24px sans-serif";
+	context.fillText(game.levels[game.levelIndex].description, 100, 250);	
+    }
+
     context.fillStyle = "#000";
     context.font = "bold 16px sans-serif";
-    context.fillText("Honor: " + game.score, 10, 20);
+    context.fillText("Honor: " + game.score + " of " + game.levels[game.levelIndex].targetHonor,
+		     10, 20);
     game.player.draw(context);
 };
 
@@ -218,6 +300,7 @@ GameMode.prototype.elapsedSeconds = function() {
 };
 
 GameMode.prototype.spawnRate = function() {
+//    return game.levels[game.levelIndex].enemySpawnRate;
     if (game.score < 1) return TICKS_PER_SECOND * 5;
     if (game.score < 10) return TICKS_PER_SECOND * 1.5;
     if (game.score < 30) return TICKS_PER_SECOND * 1.2;
@@ -232,8 +315,19 @@ GameMode.prototype.tick = function() {
 	game.activeMode = game.gameOverMode;
 	return;
     }
+
+//    console.info(game.score, game.levels[game.levelIndex].targetHonor, game.levelIndex);
+    if (game.score >= game.levels[game.levelIndex].targetHonor) {
+	if (game.levelIndex < game.levels.length - 1) {
+	    game.levelIndex++;
+	    this.init();
+	} else {
+	    game.activeMode = game.winMode;
+	}
+    }
+
     game.ticks++;
-    if (game.ticks % this.spawnRate() == 0) {
+    if (game.ticks % game.levels[game.levelIndex].enemySpawnRate == 0) {
 	this.spawnEnemy();
     }
 
