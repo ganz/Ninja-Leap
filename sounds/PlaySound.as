@@ -7,6 +7,7 @@ package {
 	import flash.events.TimerEvent;
 	import flash.external.ExternalInterface;
 	import flash.utils.Dictionary;
+	import flash.media.SoundTransform;
 	public class PlaySound extends Sprite {
 
 	       private var sounds:Dictionary = new Dictionary();
