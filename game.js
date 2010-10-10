@@ -9,7 +9,7 @@ PLAYER_COLLISION_SAFETY = 3;
 PLAYER_DASH_SPEED = 15;
 PLAYER_MOVE_SPEED = 4;
 ENEMY_MOVE_SPEED = 2;
-BARBAR_MOVE_SPEED = 1;
+BARBAR_MOVE_SPEED = 0.5;
 
 TICKS_PER_SECOND = 60;
 
@@ -35,6 +35,7 @@ Game.prototype.init = function() {
     level.description = "Protect the village!";
     level.archerShootRate = TICKS_PER_SECOND * 2;
     level.enemySpawnRate = TICKS_PER_SECOND * 4;
+    level.barbarSpawnChance = 0.00;
     this.levels.push(level);
 
     level = new Level();
@@ -43,6 +44,7 @@ Game.prototype.init = function() {
     level.description = "Save those villagers!";
     level.archerShootRate = TICKS_PER_SECOND;
     level.enemySpawnRate = TICKS_PER_SECOND * 2;
+    level.barbarSpawnChance = 0.00;
     this.levels.push(level);
 
     level = new Level();
@@ -51,6 +53,7 @@ Game.prototype.init = function() {
     level.description = "Defeat all invaders!";
     level.archerShootRate = TICKS_PER_SECOND * 0.5;
     level.enemySpawnRate = TICKS_PER_SECOND;
+    level.barbarSpawnChance = 0.1;
     this.levels.push(level);
 
     level = new Level();
@@ -59,6 +62,7 @@ Game.prototype.init = function() {
     level.description = "Defense! Defense!"
     level.archerShootRate = TICKS_PER_SECOND * 0.25;
     level.enemySpawnRate = TICKS_PER_SECOND * 0.8;
+    level.barbarSpawnChance = 0.2;
     this.levels.push(level);
 
     level = new Level();
@@ -67,6 +71,7 @@ Game.prototype.init = function() {
     level.description = "Final Wave! Time to flip out!";
     level.archerShootRate = TICKS_PER_SECOND * 0.125;
     level.enemySpawnRate = TICKS_PER_SECOND * 0.6;
+    level.barbarSpawnChance = 0.2;
     this.levels.push(level);
 
     this.levelIndex = 0;
@@ -246,7 +251,7 @@ GameMode.prototype.init = function() {
     this.tempScore = 0;
 
     this.superSpawnThreshold = 20;
-    this.spawnEnemy();
+    this.spawnEnemy(game.levels[game.levelIndex]);
 
 //    document.body.style.cursor = "none";
 
@@ -363,7 +368,7 @@ GameMode.prototype.draw = function() {
     */
 };
 
-GameMode.prototype.spawnEnemy = function() {
+GameMode.prototype.spawnEnemy = function(level) {
     var x = -1;
     var y = -1;
 
@@ -378,8 +383,13 @@ GameMode.prototype.spawnEnemy = function() {
 	y = (Math.random() > 0.5) ? -100 : 480 + 100;
 	x = Math.random() * 640;
     }
-
-    var enemy = new Enemy(x, y);
+    
+    var enemy;
+    if (Math.random() <= level.barbarSpawnChance) {
+	enemy = new Barbar(x, y);
+    } else {
+	enemy = new Enemy(x, y);
+    }
     game.enemies.push(enemy);
 };
 
@@ -416,14 +426,14 @@ GameMode.prototype.tick = function() {
 
     game.ticks++;
     if (game.ticks % game.levels[game.levelIndex].enemySpawnRate == 0) {
-	this.spawnEnemy();
+	this.spawnEnemy(game.levels[game.levelIndex]);
     }
 
     // Spawn N extra enemies after M kills
     if (this.kills > this.superSpawnThreshold) {
 	this.superSpawnThreshold += 20;
 	for(var i = 0; i < 4; i++) {
-	    this.spawnEnemy()
+	    this.spawnEnemy(game.levels[game.levelIndex]);
 	}
     }
 
