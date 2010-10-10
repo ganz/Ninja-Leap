@@ -1,0 +1,7 @@
+load pre-scaled graphics instead of full-size originals
+v1 villager graphics
+v1 enemy graphics
+v1 village graphics
+v1 dash sound
+v1 dash graphics
+set dead bit and draw upside down

@@ -1,8 +1,9 @@
 var SLASH_WIDTH = 5;
 
 function Position(x, y) {
-    this.x = x;
-    this.y = y;
+    this.x = this.prevX = x;
+    this.y = this.prevY = y;
+    this.facing = 1; // 0 = left, 1 = right
 };
 
 Position.prototype.dist = function(position) {
@@ -11,17 +12,46 @@ Position.prototype.dist = function(position) {
     return Math.sqrt(a * a + b * b);
 };
 
+Position.prototype.saveState = function() {
+    this.prevX = this.x;
+    this.prevY = this.y;
+}
+
+Position.prototype.move = function(xDist, yDist) {
+    this.saveState();
+    this.x += xDist;
+    this.y += yDist;
+
+    if (this.x < this.prevX) {
+	this.facing = 0;
+    }
+    else if (this.x > this.prevX) {
+	this.facing = 1;
+    }
+};
+
 Position.prototype.moveTowards = function(position, magnitude) {
+    this.saveState();
+
     var dx = position.x - this.x;
     var dy = position.y - this.y;
 
     var dist = Math.sqrt(dx * dx + dy * dy);
     this.x = this.x + (magnitude / dist) * dx;
     this.y = this.y + (magnitude / dist) * dy;
+
+    if (this.x < this.prevX) {
+	this.facing = 0;
+    }
+    else if (this.x > this.prevX) {
+	this.facing = 1;
+    }
 };
 
 function Ninja(x, y) {
     this.position = new Position(x, y);
+    this.prevPosition = this.position;
+
     this.dashPosition = null;
     this.size = 12;
 
@@ -33,6 +63,14 @@ function Ninja(x, y) {
     this.frameIndex = 0;
     this.frameLength = 200;
     this.time = new Date().getTime();
+
+    this.lframes = [];
+    this.lframes[0] = new Image();
+    this.lframes[0].src = "images/ninja1l.gif";
+    this.lframes[1] = new Image();
+    this.lframes[1].src = "images/ninja2l.gif";
+    this.frameIndex = 0;
+    this.frameLength = 200;
 };
 
 Ninja.prototype.dash = function(position) {
@@ -72,24 +110,17 @@ Ninja.prototype.tick = function() {
 Ninja.prototype.draw = function(context) {
     var cornerX = this.position.x - this.size;
     var cornerY = this.position.y - this.size;
-    context.drawImage(this.frames[this.frameIndex], cornerX, cornerY,
-		      this.size * 2, this.size * 2);
+    if (this.position.facing == 1) {
+	context.drawImage(this.frames[this.frameIndex], cornerX, cornerY,
+			  this.size * 2, this.size * 2);
+    } else if (this.position.facing == 0) {
+	context.drawImage(this.lframes[this.frameIndex], cornerX, cornerY,
+			  this.size * 2, this.size * 2);
+    }
     
     var newTime = new Date().getTime();
     if (newTime - this.time >= this.frameLength) {
 	this.frameIndex = (this.frameIndex + 1) % this.frames.length;
 	this.time = newTime;
     }
-
-    /*
-    context.strokeStyle = "#000000";
-    context.fillStyle = "#733";
-    context.beginPath();
-    context.arc(this.position.x,this.position.y,10,0,Math.PI*2,true);
-    context.lineWidth = 2
-    context.closePath();
-    context.stroke();
-    context.fill();
-    */
 };
-
