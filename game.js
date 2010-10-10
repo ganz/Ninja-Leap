@@ -158,7 +158,7 @@ function TitleMode() {
 
 TitleMode.prototype.init = function() {
     console.info(game.player.position.x);
-    game.player.position.x = 100;
+    game.player.position.x = 115;
     game.player.position.y = 200;
     game.allies = [];
     game.enemies = [];
@@ -177,7 +177,7 @@ TitleMode.prototype.draw = function() {
     context.font = "bold 22px sans-serif";
 
     context.fillText("WASD to move, click to ninja leap", 100, 260);
-    context.fillText("[ninja leap] past the enemy to start", 100, 300);
+    context.fillText("[ninja leap] through the enemy to start", 100, 300);
 
     game.drawRetical(context);
 
@@ -272,14 +272,14 @@ GameMode.prototype.init = function() {
 	new FadingMessage(game.levels[game.levelIndex].title, 
 			  32,
 			  game.ticks + TICKS_PER_SECOND * 2, 
-			  new Position(100, 170),
+			  new Position(220, 100),
 			  "#FFF",
 			  true));
     game.fadingMessages.push(
 	new FadingMessage(game.levels[game.levelIndex].description, 
 			  24,
 			  game.ticks + TICKS_PER_SECOND * 2, 
-			  new Position(100, 250),
+			  new Position(220, 130),
 			  "#FFF",
 			  true));
 };
