@@ -118,7 +118,7 @@ Ninja.prototype.tick = function() {
 		    game.gameMode.kills++;
 		    this.comboCounter++;
 		    game.fadingMessages.push(
-			new FadingMessage(this.comboCounter + " honor",
+			new FadingMessage("+" + this.comboCounter + " honor",
 					  12 + this.comboCounter * 2,
 					  game.ticks + TICKS_PER_SECOND * 1, 
 					  new Position(enemy.position.x - enemy.size / 2,
