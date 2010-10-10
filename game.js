@@ -21,9 +21,17 @@ function Game() {
 
     this.villageSprite = new Image();
     this.villageSprite.src = "images/village.png";
+
 };
 
 Game.prototype.init = function() {
+    this.sounds = {};
+    this.loadSound("dash.mp3", 10);
+    this.loadSound("enemyDeath.mp3", 10);
+    this.loadSound("villagerDeath.mp3", 10);
+    this.loadSound("arrow.mp3", 20);
+
+
     this.titleMode = new TitleMode();
     this.titleMode.init();
     this.activeMode = this.titleMode;
@@ -41,11 +49,30 @@ Game.prototype.init = function() {
     }
 
     document.onmousedown = function(event) {
+	thiz.playSound("dash.mp3");
 	thiz.player.dash(new Position(event.x, event.y));
     }
 
     setInterval(function() { thiz.tick() }, 1000 / TICKS_PER_SECOND);
 };
+
+Game.prototype.loadSound = function(filename, numInstances) {
+    this.sounds[filename] = {};
+    this.sounds[filename]["sounds"] = [];
+    this.sounds[filename]["index"] = 0;
+    
+    for (var i = 0; i < numInstances; i++) {
+	this.sounds[filename]["sounds"][i] = new Audio("sounds/" + filename);
+    }
+};
+
+Game.prototype.playSound = function(filename) {
+    var index = this.sounds[filename]["index"];
+    var sounds = this.sounds[filename]["sounds"];
+    sounds[index].play();
+    var newIndex = (index + 1) % sounds.length;
+    this.sounds[filename]["index"] = newIndex;
+}
 
 function TitleMode() {
 };
@@ -235,6 +262,7 @@ GameMode.prototype.tick = function() {
 	for (var j = 0; j < game.allies.length; j++) {
 	    var ally = game.allies[j];
 	    if (enemy.position.dist(ally.position) < enemy.size + ally.size) {
+		game.playSound("villagerDeath.mp3");
 		game.allies.splice(j, 1);
 		j--;
 

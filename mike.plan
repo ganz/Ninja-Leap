@@ -1,7 +1,17 @@
 load pre-scaled graphics instead of full-size originals
-v1 villager graphics
-v1 enemy graphics
-v1 village graphics
-v1 dash sound
-v1 dash graphics
 set dead bit and draw upside down
+high score list
+different enemy types
+"hit points"/healing in the village
+
+make sounds 2 seconds long
+
+v1 dash graphics
+motion trail on ninja
+
+v1 dash sound
+enemy death sound
+villager death sound
+arrow shot sound
+game start sound
+game over sound
