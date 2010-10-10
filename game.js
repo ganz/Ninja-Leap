@@ -4,6 +4,7 @@ KEYS.A = 65;
 KEYS.S = 83;
 KEYS.D = 68;
 KEYS.ENTER = 13;
+KEYS.SPACE = 32;
 
 PLAYER_COLLISION_SAFETY = 3;
 PLAYER_DASH_SPEED = 15;
@@ -170,7 +171,6 @@ function TitleMode() {
 };
 
 TitleMode.prototype.init = function() {
-    console.info(game.player.position.x);
     game.player.position.x = 115;
     game.player.position.y = 200;
     game.allies = [];
@@ -224,26 +224,27 @@ GameOverMode.prototype.draw = function() {
 
     context.fillStyle = "#FFF";
     context.font = "bold 32px sans-serif";
-    context.shadowOffsetX = 3;
-    context.shadowOffsetY = 3;
-    context.shadowBlur = 4;
-    context.shadowColor = "black";
-    context.fillText("You have shamed ninja kind!", 100, 150);
+//    context.shadowOffsetX = 0;
+//    context.shadowOffsetY = 0;
+//    context.shadowBlur = 10;
+//    context.shadowColor = "#555";
+    context.fillText("You have shamed ninja kind!", 160, 80);
 
     context.font = "bold 22px sans-serif";
 
     if (game.gameoverReason) {
-	context.fillText(game.gameoverReason, 100, 200);
+	context.fillText(game.gameoverReason, 160, 110);
     }
 
-    context.fillText("Honor score reset to: " + (game.score + game.gameMode.tempScore), 100, 230);
-    context.fillText("Press [enter] to play again", 100, 290);
+    context.fillText("Honor score reset to " + (game.score) + ", from " + (game.score + game.gameMode.tempScore), 160, 140);
+    context.fillText("Press [space] to play again", 160, 400);
     context.shadowColor = "transparent";
 };
 
 GameOverMode.prototype.tick = function() {
     this.draw();
-    if (game.keyMap[KEYS.ENTER]) {
+    if (game.keyMap[KEYS.SPACE]) {
+	game.player.dashPosition = null;
 	game.gameMode.init();
 	game.activeMode = game.gameMode;
     }
@@ -283,15 +284,13 @@ GameMode.prototype.init = function() {
 			  32,
 			  game.ticks + TICKS_PER_SECOND * 2, 
 			  new Position(220, 100),
-			  "#FFF",
-			  true));
+			  "#FFF"));
     game.fadingMessages.push(
 	new FadingMessage(game.levels[game.levelIndex].description, 
 			  24,
 			  game.ticks + TICKS_PER_SECOND * 2, 
 			  new Position(220, 130),
-			  "#FFF",
-			  true));
+			  "#FFF"));
 };
 
 GameMode.prototype.draw = function() {
@@ -358,7 +357,7 @@ GameMode.prototype.draw = function() {
     }
 
 
-    context.fillStyle = "#000";
+    context.fillStyle = "#FFF";
     context.font = "bold 16px sans-serif";
     context.fillText("Honor: " + (game.score + this.tempScore), 10, 20);
     context.fillText("Enemies left: " +  (game.levels[game.levelIndex].neededKills - this.kills),
@@ -563,13 +562,14 @@ GameMode.prototype.tick = function() {
 };
 
 
-function FadingMessage(msg, size, expiration, position, color, shadow) {
+function FadingMessage(msg, size, expiration, position, color, shadow, shadowBlur) {
     this.msg = msg;
     this.size = size;
     this.expiration = expiration;
     this.position = position;
     this.color = color;
     this.shadow = shadow
+    this.shadowBlur = shadowBlur;
 };
 
 FadingMessage.prototype.draw = function(context) {
@@ -580,7 +580,7 @@ FadingMessage.prototype.draw = function(context) {
     if (this.shadow) {
 	context.shadowOffsetX = 0;
 	context.shadowOffsetY = 0;
-	context.shadowBlur = 10;
+	context.shadowBlur = this.shadowBlur ? this.shadowBlur : 10;
 	context.shadowColor = '#555';
     }
 
