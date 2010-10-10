@@ -67,10 +67,10 @@ Game.prototype.init = function() {
     this.levels.push(level);
 
     this.levelIndex = 0;
-    this.loadSound("dash.mp3", 10);
-    this.loadSound("enemyDeath.mp3", 10);
-    this.loadSound("villagerDeath.mp3", 10);
-    this.loadSound("arrow.mp3", 20);
+    this.loadSound("dash.mp3");
+    this.loadSound("enemydeath.mp3");
+    this.loadSound("villagerdeath.mp3");
+    this.loadSound("arrow.mp3");
 
     this.titleMode = new TitleMode();
     this.titleMode.init();
@@ -417,7 +417,7 @@ GameMode.prototype.tick = function() {
 	for (var j = 0; j < game.allies.length; j++) {
 	    var ally = game.allies[j];
 	    if (enemy.position.dist(ally.position) < enemy.size + ally.size) {
-		game.playSound("villagerDeath.mp3");
+		game.playSound("villagerdeath.mp3");
 		game.allies.splice(j, 1);
 		j--;
 

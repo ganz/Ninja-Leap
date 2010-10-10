@@ -13,6 +13,7 @@ package {
 
 	       public function PlaySound() {
 			var display_txt:TextField = new TextField();
+			display_txt.width = 400;
 			display_txt.text = "Hello Worldadfsdf!";
 			addChild(display_txt);	       	      
 
@@ -20,6 +21,7 @@ package {
 	                   ExternalInterface.addCallback("loadSound", loadSound);
 	                   ExternalInterface.addCallback("playSound", playSound);
 			}
+
 			function loadSound(filename:String):void
 			{
 			  var url:URLRequest = new URLRequest("sounds/" + filename);
