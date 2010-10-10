@@ -141,4 +141,51 @@ Ninja.prototype.draw = function(context) {
 	this.frameIndex = (this.frameIndex + 1) % this.frames.length;
 	this.time = newTime;
     }
+
+    // Draw three sweet motion trails
+    if (this.dashPosition) {
+	var dx = this.position.x - this.dashPosition.x;
+	var dy = this.position.y - this.dashPosition.y;
+	var dist = this.position.dist(this.dashPosition);
+
+	var unitDx = dx / dist;
+	var unitDy = dy / dist;
+	
+	var trailLength = Math.min(110);
+	var trailOffsetX = dx / dist * trailLength;
+	var trailOffsetY = dy / dist * trailLength;
+
+	context.globalAlpha = 0.5;
+	context.strokeStyle = "#FFF";
+	context.fillStyle = "#000";
+
+	context.beginPath();
+	context.moveTo(this.position.x, this.position.y);
+	context.lineTo(this.position.x + trailOffsetX,
+		       this.position.y + trailOffsetY);
+
+	var motionLineOffset = 5;
+
+	trailLength = trailLength * 0.75;
+	trailOffsetX = dx / dist * trailLength;
+	trailOffsetY = dy / dist * trailLength;
+
+	context.moveTo(this.position.x + motionLineOffset * -unitDy, 
+		       this.position.y + motionLineOffset * unitDx);
+	context.lineTo(this.position.x + trailOffsetX + motionLineOffset * -unitDy,
+		       this.position.y + trailOffsetY + motionLineOffset * unitDx);
+
+	context.moveTo(this.position.x + motionLineOffset * unitDy, 
+		       this.position.y + motionLineOffset * -unitDx);
+	context.lineTo(this.position.x + trailOffsetX + motionLineOffset * unitDy,
+		       this.position.y + trailOffsetY + motionLineOffset * -unitDx);
+	context.closePath();
+
+
+	context.lineWidth = 2;
+	context.stroke();
+	
+	context.fill();
+	context.globalAlpha = 1.0;
+    }
 };

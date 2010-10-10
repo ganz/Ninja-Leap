@@ -1,6 +1,15 @@
 - retune later levels to have crazy crazy vilagers
 
 dash animation
+  - try transparent bar
+  - maybe try a series of line
+  - a faded gradient?
+  - diagonal slashes to indicate sword swipes?
+  - maybe have slashes through enemies on contact?
+
+enemy death animation
+  - enemies fade away?
+
 
 High score list
 Local storage high score list
