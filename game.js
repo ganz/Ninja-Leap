@@ -29,7 +29,28 @@ function Game() {
     this.backgroundImage.src = "images/background.png";
 };
 
+Game.prototype.setHighScores = function(scores) {
+    localStorage.setItem("highscores", scores);
+}
+
+Game.prototype.loadHighScores = function() {
+    var scoresString = localStorage.getItem("highscores");
+    if (!scoresString) {
+	var oldScores = [["decent ninja", 12], ["bad ninja", 4]];
+    }
+
+    var scores = []
+    var splitScores = scoresString.split(",");
+    for (var i = 0; i < splitScores.length / 2; i++) {
+	var scorePair = []
+	scorePair = [splitScores[i * 2], parseInt(splitScores[i * 2 + 1])];
+	scores.push(scorePair);
+    }
+    return scores;
+}
+
 Game.prototype.init = function() {
+    this.highScores = this.loadHighScores();
     this.score = 0;
     this.fadingMessages = [];
 
@@ -38,8 +59,8 @@ Game.prototype.init = function() {
     level.title = "Day One";
     level.neededKills = 5;
     level.description = "Protect the village!";
-    level.archerShootRate = TICKS_PER_SECOND * 2;
     level.enemySpawnRate = TICKS_PER_SECOND * 4;
+    level.archerShootRate = TICKS_PER_SECOND * 2;
     level.barbarSpawnChance = 0.00;
     this.levels.push(level);
 
@@ -140,8 +161,6 @@ function WinMode() {
 }
 
 WinMode.prototype.init = function() {
-    game.player.x = 300;
-    game.player.y = 200;
 };
 
 WinMode.prototype.draw = function() {
@@ -150,21 +169,40 @@ WinMode.prototype.draw = function() {
 
     context.fillStyle = "#FFF";
     context.font = "bold 48px sans-serif";
-    context.fillText("YOU WIN", 100, 150);
+    context.fillText("YOU WIN", 100, 90);
 
     context.font = "bold 22px sans-serif";
 
 
-    context.fillText("You earned " + game.score + " honor.", 100, 230);
-    context.fillText("You are the greatest ninja ever.", 100, 260);
-    context.fillText("Your honor is eternal.", 100, 290);
-    context.fillText("The villagers apologize for the arrows.", 100, 320);
+    context.fillText("You earned " + game.score + " honor.", 100, 130);
+    context.fillText("You are the greatest ninja ever.", 100, 155);
+    context.fillText("Your honor is eternal.", 100, 180);
+    context.fillText("The villagers apologize for the arrows.", 100, 205);
+
+    context.fillStyle = "#FFF";
+    context.font = "bold 28px sans-serif";
+    context.fillText("High Scores", 100, 260);
+    context.font = "bold 16px sans-serif";
+    for (var i = 0; i < Math.min(10, game.highScores.length); i++) {
+	var name = game.highScores[i][0];
+	var score = game.highScores[i][1];
+	context.fillText(name + " - " + score, 100, 280 + i * 20);
+    }
 
     game.player.draw(context);
 };
 
 WinMode.prototype.tick = function() {
     this.draw();
+    if (!this.name) {
+	this.name = prompt("CONGRATS - what is your ninja name?","a ninja");
+	game.highScores.push([this.name, game.score]);
+
+	function sortnum(a, b) { return b[1] - a[1] };
+	game.highScores = game.highScores.sort(sortnum);
+	game.highScores = game.highScores.slice(0, 10);
+	game.setHighScores(game.highScores);
+    }
 };
 
 function TitleMode() {
@@ -172,10 +210,10 @@ function TitleMode() {
 
 TitleMode.prototype.init = function() {
     game.player.position.x = 115;
-    game.player.position.y = 200;
+    game.player.position.y = 110;
     game.allies = [];
     game.enemies = [];
-    this.enemy = new Enemy(200, 200);
+    this.enemy = new Enemy(200, 110);
     game.enemies.push(this.enemy);
 };
 
@@ -184,12 +222,12 @@ TitleMode.prototype.draw = function() {
     game.drawBackground(context);
     context.fillStyle = "#FFF";
     context.font = "bold 48px sans-serif";
-    context.fillText("Ninja Leap", 100, 150);
+    context.fillText("Ninja Leap", 100, 70);
 
-    context.font = "bold 22px sans-serif";
+    context.font = "bold 16px sans-serif";
 
-    context.fillText("WASD to move, click to ninja leap", 100, 260);
-    context.fillText("[ninja leap] through the enemy to start", 100, 300);
+    context.fillText("WASD to move, click to ninja leap", 100, 160);
+    context.fillText("[ninja leap] through the enemy to start", 100, 180);
 
     game.drawRetical(context);
 
@@ -198,6 +236,15 @@ TitleMode.prototype.draw = function() {
 	enemy.draw(context, enemy.position.x, enemy.position.y, 10);
     }
 
+    context.fillStyle = "#FFF";
+    context.font = "bold 28px sans-serif";
+    context.fillText("High Scores", 100, 260);
+    context.font = "bold 16px sans-serif";
+    for (var i = 0; i < Math.min(10, game.highScores.length); i++) {
+	var name = game.highScores[i][0];
+	var score = game.highScores[i][1];
+	context.fillText(name + " - " + score, 100, 280 + i * 20);
+    }
     game.player.draw(context);
 };
 
@@ -444,6 +491,7 @@ GameMode.prototype.tick = function() {
 	    game.levelIndex++;
 	    this.init();
 	} else {
+	    game.winMode.init();
 	    game.playSound("youwin.mp3");
 	    game.activeMode = game.winMode;
 	}
