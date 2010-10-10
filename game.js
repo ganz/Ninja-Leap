@@ -67,7 +67,6 @@ Game.prototype.init = function() {
     this.levels.push(level);
 
     this.levelIndex = 0;
-    this.sounds = {};
     this.loadSound("dash.mp3", 10);
     this.loadSound("enemyDeath.mp3", 10);
     this.loadSound("villagerDeath.mp3", 10);
@@ -102,22 +101,12 @@ Game.prototype.init = function() {
 function Level() {
 }
 
-Game.prototype.loadSound = function(filename, numInstances) {
-    this.sounds[filename] = {};
-    this.sounds[filename]["sounds"] = [];
-    this.sounds[filename]["index"] = 0;
-    
-    for (var i = 0; i < numInstances; i++) {
-	this.sounds[filename]["sounds"][i] = new Audio("sounds/" + filename);
-    }
+Game.prototype.loadSound = function(filename) {
+    document["PlaySound"].loadSound(filename);
 };
 
 Game.prototype.playSound = function(filename) {
-    var index = this.sounds[filename]["index"];
-    var sounds = this.sounds[filename]["sounds"];
-    sounds[index].play();
-    var newIndex = (index + 1) % sounds.length;
-    this.sounds[filename]["index"] = newIndex;
+    document["PlaySound"].playSound(filename);
 }
 
 function WinMode() {
@@ -382,6 +371,7 @@ GameMode.prototype.tick = function() {
 	var target = new Position(enemy.position.x + Math.random() * jitter - jitter / 2,
 				  enemy.position.y + Math.random() * jitter - jitter / 2);
 	var arrow = new Arrow(start, target);
+	game.playSound("arrow.mp3");
 	game.projectiles.push(arrow);
     }
 
@@ -520,4 +510,6 @@ Game.prototype.draw = function() {
 //};
 
 var game = new Game();
-game.init();
+function init() {
+    game.init();
+}
