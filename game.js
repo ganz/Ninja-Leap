@@ -138,7 +138,7 @@ Game.prototype.draw = function() {
 
     for (var i = 0; i < this.allies.length; i++) {
 	var ally = this.allies[i];
-	ally.draw(context, ally.position.x, ally.position.y, 10, "#77D");	    
+	ally.draw(context, ally.position.x, ally.position.y);
     }
 
     for (var i = 0; i < this.enemies.length; i++) {
