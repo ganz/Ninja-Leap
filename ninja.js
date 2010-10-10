@@ -37,9 +37,13 @@ Position.prototype.moveTowards = function(position, magnitude) {
     var dy = position.y - this.y;
 
     var dist = Math.sqrt(dx * dx + dy * dy);
-    this.x = this.x + (magnitude / dist) * dx;
-    this.y = this.y + (magnitude / dist) * dy;
-
+    if (dist > magnitude) {
+	this.x = this.x + (magnitude / dist) * dx;
+	this.y = this.y + (magnitude / dist) * dy;
+    } else {
+	this.x = position.x;
+	this.y = position.y;
+    }
     if (this.x < this.prevX) {
 	this.facing = 0;
     }

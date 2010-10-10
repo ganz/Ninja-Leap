@@ -51,3 +51,44 @@ Ally.prototype.draw = function(context, x, y) {
 	this.time = newTime;
     }
 };
+
+function Arrow(pos, target) {
+    this.position = pos;
+    this.target = target;
+    this.active = true;
+
+    var dx = this.position.x - this.target.x;
+    var dy = this.position.y - this.target.y;
+    var dist = this.position.dist(this.target);
+
+    var arrowLength = 15
+    this.tailOffsetX = dx / dist * arrowLength;
+    this.tailOffsetY = dy / dist * arrowLength;
+};
+
+Arrow.prototype.tick = function() {
+    if (this.position.x == this.target.x &&
+	this.position.y == this.target.y) {
+	this.active = false
+    }
+    if (!this.active) {
+	return;
+    }
+    this.position.moveTowards(this.target, 6);
+
+};
+
+Arrow.prototype.draw = function(context, x, y) {    
+    context.strokeStyle = "#000000";
+    context.fillStyle = "#333";
+    context.beginPath();
+    context.moveTo(this.position.x, this.position.y);
+
+    context.lineTo(this.position.x + this.tailOffsetX,
+		   this.position.y + this.tailOffsetY);
+//    context.arc(this.position.x,this.position.y,5,0,Math.PI*2,true);
+    context.lineWidth = 1
+    context.closePath();
+    context.stroke();
+    context.fill();
+};

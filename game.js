@@ -112,6 +112,7 @@ function GameMode() {
 GameMode.prototype.init = function() {
     game.keyMap = {};
     game.enemies = [];
+    game.projectiles = [];
     game.allies = [];
     game.score = 0;
     game.gameover = false;
@@ -137,6 +138,11 @@ GameMode.prototype.draw = function() {
     for (var i = 0; i < game.allies.length; i++) {
 	var ally = game.allies[i];
 	ally.draw(context, ally.position.x, ally.position.y);
+    }
+
+    for (var i = 0; i < game.projectiles.length; i++) {
+	var projectile = game.projectiles[i];
+	projectile.draw(context);
     }
 
     for (var i = 0; i < game.enemies.length; i++) {
@@ -206,7 +212,8 @@ GameMode.prototype.tick = function() {
     if (game.ticks % this.spawnRate() == 0) {
 	this.spawnEnemy();
     }
-    // Spawn N extra enemies every 3 seconds
+
+    // Spawn N extra enemies after M kills
     if (game.score > this.superSpawnThreshold) {
 	this.superSpawnThreshold += 20;
 	for(var i = 0; i < 4; i++) {
@@ -214,7 +221,40 @@ GameMode.prototype.tick = function() {
 	}
     }
 
+    if (game.ticks % (TICKS_PER_SECOND / 10) == 0 && game.enemies.length > 0) {
+	var ally = game.allies[parseInt(Math.random() * game.allies.length)];
+	var enemy = game.enemies[parseInt(Math.random() * game.enemies.length)];
+
+	var start = new Position(ally.position.x, ally.position.y);
+	var target = new Position(enemy.position.x, enemy.position.y);
+	var arrow = new Arrow(start, target);
+	game.projectiles.push(arrow);
+    }
+
     game.movePlayer();
+
+    for (var i = 0; i < game.projectiles.length; i++) {
+	var projectile = game.projectiles[i];
+	projectile.tick();
+
+	if (!projectile.active) {
+	    continue;
+	}
+
+	for (var j = 0; j < game.enemies.length; j++) {
+	    var enemy = game.enemies[j];
+	    if (projectile.position.dist(enemy.position) <= enemy.size) {
+		game.enemies.splice(j, 1);
+		i--;
+	    }
+	}
+
+	if (!game.player.dashPosition && game.player.position.dist(projectile.position)
+	    <= game.player.size - PLAYER_COLLISION_SAFETY) {
+	    game.gameover = true;
+	    game.gameoverReason = "You have been slain by the villagers.";
+	}
+    }
 
     for (var i = 0; i < game.enemies.length; i++) {
 	var enemy = game.enemies[i];
@@ -222,7 +262,7 @@ GameMode.prototype.tick = function() {
 	if (enemy.position.dist(game.player.position) <=
 	    (enemy.size + game.player.size - PLAYER_COLLISION_SAFETY)) {
 	    game.gameover = true;
-	    game.gameoverReason = "You have been slain.";
+	    game.gameoverReason = "You have been slain by an enemy.";
 	}
 	for (var j = 0; j < game.allies.length; j++) {
 	    var ally = game.allies[j];
