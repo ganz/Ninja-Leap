@@ -63,7 +63,7 @@ Ninja.prototype.tick = function() {
 	    if (dist <= (this.size + ally.size)) {
 		game.allies.splice(i, 1);
 		i--;
-		game.score++;
+		game.score--;
 	    }
 	};
     }
