@@ -71,7 +71,7 @@ Game.prototype.init = function() {
 
     this.levelIndex = 0;
 
-//    game.levels= [game.levels[0], game.levels[1]];
+//    game.levels= [game.levels[1], game.levels[2]];
 
     this.loadSound("dash.mp3");
     this.loadSound("enemydeath.mp3");
@@ -324,7 +324,7 @@ GameMode.prototype.draw = function() {
     context.fillStyle = "#000";
     context.font = "bold 16px sans-serif";
     context.fillText("Honor: " + (game.score + this.tempScore), 10, 20);
-    context.fillText("Kills: " + this.kills + " of " + game.levels[game.levelIndex].neededKills,
+    context.fillText("Enemies left: " +  (game.levels[game.levelIndex].neededKills - this.kills),
 		     10, 40);
     game.player.draw(context);
 
