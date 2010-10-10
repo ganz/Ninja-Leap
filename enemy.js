@@ -8,11 +8,13 @@ Enemy.prototype.tick = function() {
 };
 
 Enemy.prototype.draw = function(context, x, y, width, fillColor) {
-    context.strokeStyle = "#000000";
+    context.shadowColor = "#F00";
+    context.shadowBlur = 10;
+    context.strokeStyle = "#330000";
     if (fillColor) {
 	context.fillStyle = fillColor;
     } else {
-	context.fillStyle = "#333";
+	context.fillStyle = "#853";
     }
     context.beginPath();
     context.arc(x,y,width,0,Math.PI*2,true);
@@ -20,6 +22,15 @@ Enemy.prototype.draw = function(context, x, y, width, fillColor) {
     context.closePath();
     context.stroke();
     context.fill();
+
+    // eyes
+    context.fillStyle = "#F00";
+    context.beginPath();
+    context.arc(x - width / 3, y - width / 5, 2, 0, Math.PI * 2, true);
+    context.arc(x + width / 3, y - width / 5, 2, 0, Math.PI * 2, true);
+    context.closePath();
+    context.fill();
+    context.shadowColor = "transparent";
 };
 
 function Ally(x, y) {

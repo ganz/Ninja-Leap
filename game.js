@@ -67,6 +67,7 @@ Game.prototype.init = function() {
     this.levels.push(level);
 
     this.levelIndex = 0;
+
     this.loadSound("dash.mp3");
     this.loadSound("enemydeath.mp3");
     this.loadSound("villagerdeath.mp3");
@@ -81,6 +82,10 @@ Game.prototype.init = function() {
 
     this.winMode = new WinMode();
 
+    this.mousePos = new Position(-200, -200);
+    this.swordCursor = new Image();
+    this.swordCursor.src = "images/sword.png";
+    
     var thiz = this;
     document.onkeydown = function(event) {
 	thiz.keyMap[event.keyCode] = true;
@@ -93,6 +98,11 @@ Game.prototype.init = function() {
     document.onmousedown = function(event) {
 	thiz.playSound("dash.mp3");
 	thiz.player.dash(new Position(event.x, event.y));
+    }
+
+    document.onmousemove = function(event) {
+	thiz.mousePos.x = event.x;
+	thiz.mousePos.y = event.y;
     }
 
     setInterval(function() { thiz.tick() }, 1000 / TICKS_PER_SECOND);
@@ -229,6 +239,8 @@ GameMode.prototype.init = function() {
     this.showLevelInfoExpiration = TICKS_PER_SECOND * 3;
     this.superSpawnThreshold = 20;
     this.spawnEnemy();
+
+    document.body.style.cursor = "none";
 };
 
 GameMode.prototype.draw = function() {
@@ -246,6 +258,7 @@ GameMode.prototype.draw = function() {
 	projectile.draw(context);
     }
 
+    var centerPos = new Position(320, 240);
     for (var i = 0; i < game.enemies.length; i++) {
 	var enemy = game.enemies[i];
 	if (enemy.position.x < -enemy.size ||
@@ -258,7 +271,18 @@ GameMode.prototype.draw = function() {
 	    if (y < -enemy.size) y = 0;
 	    if (x > 640 + enemy.size) x = 640;
 	    if (y > 480 + enemy.size) y = 480;
-	    enemy.draw(context, x, y, 10, "#F00");
+	    //enemy.draw(context, x, y, 10, "#F00");
+	    context.fillStyle = "red";
+	    context.strokeStyle = "red";
+	    context.shadowBlur = 5;
+	    context.shadowColor = "red";
+	    context.beginPath();
+	    var dist = centerPos.dist(enemy.position);
+	    context.arc(x, y, dist / 15, 0, Math.PI * 2, true);
+	    context.closePath();
+	    context.fill();
+	    //context.stroke();
+	    context.shadowColor = "transparent";
 	} else {
 	    enemy.draw(context, enemy.position.x, enemy.position.y, 10);
 	}
@@ -278,6 +302,25 @@ GameMode.prototype.draw = function() {
     context.fillText("Honor: " + game.score + " of " + game.levels[game.levelIndex].targetHonor,
 		     10, 20);
     game.player.draw(context);
+
+    // draw a sword cursor at the mouse position
+    /*
+    context.fillStyle = "white";
+    context.strokeStyle = "black";
+    context.beginPath();
+    context.arc(game.mousePos.x, game.mousePos.y, 20, 0, Math.PI * 2, true);
+    context.closePath();
+    context.globalAlpha = 0.2;
+    context.fill();
+    context.globalAlpha = 1.0;
+    context.stroke();
+    */
+    context.shadowOffsetX = 0;
+    context.shadowOffsetY = 0;
+    context.shadowBlur = 6;
+    context.shadowColor = "black";
+    context.drawImage(game.swordCursor, game.mousePos.x - 13, game.mousePos.y - 13, 26, 26);
+    context.shadowColor = "transparent";
 };
 
 GameMode.prototype.spawnEnemy = function() {

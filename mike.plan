@@ -1,10 +1,16 @@
-load pre-scaled graphics instead of full-size originals
-set dead bit and draw upside down
-high score list
+// YES:
 different enemy types
-"hit points"/healing in the village
-
-higher bitrate mp3s again
-
+endless mode spawning function
+high score list for endless mode
 game start sound
 game over sound
+
+// NICE TO HAVE:
+music
+"hit points"/healing in the village
+higher bitrate mp3s again / less harsh sounds
+procedurally textured grass background
+
+// MEH:
+load pre-scaled graphics instead of full-size originals
+set dead bit and draw upside down and disable dashing
