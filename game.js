@@ -132,6 +132,8 @@ GameMode.prototype.init = function() {
     game.allies.push(new Ally(330, 245));
     game.allies.push(new Ally(340, 200));
     game.allies.push(new Ally(355, 230));
+
+    this.superSpawnThreshold = 20;
     this.spawnEnemy();
 };
 
@@ -213,11 +215,13 @@ GameMode.prototype.tick = function() {
 	this.spawnEnemy();
     }
     // Spawn N extra enemies every 3 seconds
-    if (game.ticks % (TICKS_PER_SECOND * 20) == 0) {
+    if (game.score > this.superSpawnThreshold) {
+	this.superSpawnThreshold += 20;
 	for(var i = 0; i < 4; i++) {
 	    this.spawnEnemy()
 	}
     }
+
     game.movePlayer();
 
     for (var i = 0; i < game.enemies.length; i++) {
