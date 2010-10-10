@@ -18,6 +18,9 @@ function Game() {
     // map of keycodes, either missing or "true" if currently pressed down
     this.keyMap = {};
     this.ticks = 0;
+
+    this.villageSprite = new Image();
+    this.villageSprite.src = "images/village.png";
 };
 
 Game.prototype.init = function() {
@@ -86,6 +89,10 @@ GameOverMode.prototype.draw = function() {
 
     context.fillStyle = "#FFF";
     context.font = "bold 32px sans-serif";
+    context.shadowOffsetX = 3;
+    context.shadowOffsetY = 3;
+    context.shadowBlur = 4;
+    context.shadowColor = "black";
     context.fillText("You have shamed ninja kind!", 100, 150);
 
     context.font = "bold 22px sans-serif";
@@ -96,6 +103,7 @@ GameOverMode.prototype.draw = function() {
 
     context.fillText("Your honor score was: " + game.score, 100, 230);
     context.fillText("Press [enter] to play again]", 100, 290);
+    context.shadowColor = "transparent";
 };
 
 GameOverMode.prototype.tick = function() {
@@ -118,12 +126,12 @@ GameMode.prototype.init = function() {
     game.player.dashPosition = null;
     game.ticks = 0;
 
-    game.allies.push(new Ally(300, 240));
-    game.allies.push(new Ally(295, 210));
-    game.allies.push(new Ally(295, 275));
-    game.allies.push(new Ally(330, 220));
-    game.allies.push(new Ally(350, 250));
-    game.allies.push(new Ally(320, 260));
+    game.allies.push(new Ally(280, 210));
+    game.allies.push(new Ally(295, 255));
+    game.allies.push(new Ally(310, 220));
+    game.allies.push(new Ally(330, 245));
+    game.allies.push(new Ally(340, 200));
+    game.allies.push(new Ally(355, 230));
     this.spawnEnemy();
 };
 
@@ -267,6 +275,11 @@ Game.prototype.movePlayer = function() {
 };
 
 Game.prototype.drawVillage = function(context) {
+    this.cornerX = 320 - this.villageSprite.width / 2;
+    this.cornerY = 240 - this.villageSprite.height / 2;
+    context.drawImage(this.villageSprite, this.cornerX, this.cornerY);
+
+    /*
     context.strokeStyle = "#5C4033";
     context.fillStyle = "#855E42";
     context.beginPath();
@@ -275,10 +288,12 @@ Game.prototype.drawVillage = function(context) {
     context.closePath();
     context.stroke();
     context.fill();
+    */
 };
 
 Game.prototype.drawBackground = function(context) {
-    context.fillStyle = "#A78D84";
+    //context.fillStyle = "#A78D84";
+    context.fillStyle = "#64CE52";
 
     // Clear canvas
     var canvasWidth = 640;
