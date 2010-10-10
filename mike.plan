@@ -4,6 +4,9 @@ endless mode spawning function
 high score list for endless mode
 game start sound
 game over sound
+animated intro to level-play showing an enemy attacking and the ninja dashing & killing
+AND/OR
+dash to kill an enemy to start playing (dash through the enemy/entity representing the mode you want to play???)
 
 // NICE TO HAVE:
 music
