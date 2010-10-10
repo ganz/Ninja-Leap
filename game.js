@@ -88,8 +88,6 @@ Game.prototype.init = function() {
     this.winMode = new WinMode();
 
     this.mousePos = new Position(-200, -200);
-    this.swordCursor = new Image();
-    this.swordCursor.src = "images/sword.png";
     
     var thiz = this;
     document.onkeydown = function(event) {
@@ -250,7 +248,7 @@ GameMode.prototype.init = function() {
     this.superSpawnThreshold = 20;
     this.spawnEnemy();
 
-    document.body.style.cursor = "none";
+//    document.body.style.cursor = "none";
 
 
     game.fadingMessages.push(
