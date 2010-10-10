@@ -135,7 +135,7 @@ Ninja.prototype.tick = function() {
 		game.playSound("villagerdeath.mp3");
 		game.allies.splice(i, 1);
 		i--;
-		game.tempScore--;
+		game.gameMode.tempScore--;
 	    }
 	};
     }

@@ -4,6 +4,7 @@ KEYS.A = 65;
 KEYS.S = 83;
 KEYS.D = 68;
 KEYS.ENTER = 13;
+KEYS.SPACE = 32;
 
 PLAYER_COLLISION_SAFETY = 3;
 PLAYER_DASH_SPEED = 15;
@@ -162,7 +163,6 @@ function TitleMode() {
 };
 
 TitleMode.prototype.init = function() {
-    console.info(game.player.position.x);
     game.player.position.x = 115;
     game.player.position.y = 200;
     game.allies = [];
@@ -172,7 +172,6 @@ TitleMode.prototype.init = function() {
 };
 
 TitleMode.prototype.draw = function() {
-    console.info(game.player.position.x);
     var context = game.getContext();
     game.drawBackground(context);
     context.fillStyle = "#FFF";
@@ -217,26 +216,27 @@ GameOverMode.prototype.draw = function() {
 
     context.fillStyle = "#FFF";
     context.font = "bold 32px sans-serif";
-    context.shadowOffsetX = 3;
-    context.shadowOffsetY = 3;
-    context.shadowBlur = 4;
-    context.shadowColor = "black";
-    context.fillText("You have shamed ninja kind!", 100, 150);
+    context.shadowOffsetX = 0;
+    context.shadowOffsetY = 0;
+    context.shadowBlur = 10;
+    context.shadowColor = "#555";
+    context.fillText("You have shamed ninja kind!", 160, 80);
 
     context.font = "bold 22px sans-serif";
 
     if (game.gameoverReason) {
-	context.fillText(game.gameoverReason, 100, 200);
+	context.fillText(game.gameoverReason, 160, 110);
     }
 
-    context.fillText("Honor score reset to: " + (game.score + game.gameMode.tempScore), 100, 230);
-    context.fillText("Press [enter] to play again", 100, 290);
+    context.fillText("Honor score reset to " + (game.score) + ", from " + (game.score + game.gameMode.tempScore), 160, 140);
+    context.fillText("Press [space] to play again", 160, 400);
     context.shadowColor = "transparent";
 };
 
 GameOverMode.prototype.tick = function() {
     this.draw();
-    if (game.keyMap[KEYS.ENTER]) {
+    if (game.keyMap[KEYS.SPACE]) {
+	game.player.dashPosition = null;
 	game.gameMode.init();
 	game.activeMode = game.gameMode;
     }
