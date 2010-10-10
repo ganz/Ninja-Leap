@@ -22,6 +22,10 @@ function Game() {
 
     this.villageSprite = new Image();
     this.villageSprite.src = "images/village.png";
+    this.haySprite = new Image();
+    this.haySprite.src = "images/haystack.png";
+    this.backgroundImage = new Image();
+    this.backgroundImage.src = "images/background.png";
 };
 
 Game.prototype.init = function() {
@@ -598,33 +602,45 @@ Game.prototype.movePlayer = function() {
 };
 
 Game.prototype.drawVillage = function(context) {
-    this.cornerX = 320 - this.villageSprite.width / 2;
-    this.cornerY = 240 - this.villageSprite.height / 2;
-    context.drawImage(this.villageSprite, this.cornerX, this.cornerY);
-
-    /*
-    context.strokeStyle = "#5C4033";
+    context.globalAlpha = 0.2;
     context.fillStyle = "#855E42";
     context.beginPath();
-    context.arc(320, 240,60,0,Math.PI*2,true);
-    context.lineWidth = 3
+    context.arc(320, 240,100,0,Math.PI*2,true);
     context.closePath();
-    context.stroke();
     context.fill();
-    */
+
+    context.globalAlpha = 0.8;
+    context.drawImage(this.haySprite, 240, 260, 42, 39);
+    context.globalAlpha = 0.9;
+    context.drawImage(this.haySprite, 260, 170, 45, 43);
+    context.globalAlpha = 0.8;
+    context.drawImage(this.haySprite, 300, 150, 36, 34);
+    context.globalAlpha = 0.9;
+    context.drawImage(this.haySprite, 300, 290, 33, 38);
+    context.globalAlpha = 1.0;
+    context.drawImage(this.haySprite, 366, 250, 40, 43);
+    context.globalAlpha = 0.9;
+    context.drawImage(this.haySprite, 370, 190, 41, 36);
+
+
 };
 
 Game.prototype.drawBackground = function(context) {
     //context.fillStyle = "#A78D84";
-    context.fillStyle = "#64CE52";
+    //context.fillStyle = "#64CE52";
+    //context.fillStyle = "#56b247";
 
     // Clear canvas
+    /*
     var canvasWidth = 640;
     var canvasHeight = 480;
     context.fillRect(0,
 		     0,
 		     canvasWidth,
 		     canvasHeight);
+    */
+
+    context.drawImage(this.backgroundImage, 0, 0);
 };
 
 Game.prototype.getContext = function() {
