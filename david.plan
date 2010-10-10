@@ -1,5 +1,13 @@
+villagers shoot arrows
+- Ever N seconds a random villager shoots an arrow at a random enemy
+An arrow has a position that represents it's tip
+An arrow has a target position that represents it's goal
+Draw a line trailing the arrow
+Add a method "get tail of arrow" so draw methods can draw a line.
+Enemies and ninja dies on contact with arrow.
+Arrow despawns if off screen by X
+
 High score list
 Local storage high score list
 Another enemy type
-villagers shoot arrows
 healing in village?
