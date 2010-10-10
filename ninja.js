@@ -117,13 +117,14 @@ Ninja.prototype.tick = function() {
 		    game.gameMode.tempScore += 1 + this.comboCounter;
 		    game.gameMode.kills++;
 		    this.comboCounter++;
-		    console.info("WRITE A MESSAGE");
 		    game.fadingMessages.push(
-			new FadingMessage(this.comboCounter + "x",
-					  16,
+			new FadingMessage("+" + this.comboCounter + " honor",
+					  12 + this.comboCounter * 2,
 					  game.ticks + TICKS_PER_SECOND * 1, 
 					  new Position(enemy.position.x - enemy.size / 2,
-						       enemy.position.y + enemy.size / 4)));
+						       enemy.position.y + enemy.size / 4),
+					  "#FC0",
+					  true));
 		}
 	    }
 	};
@@ -134,7 +135,7 @@ Ninja.prototype.tick = function() {
 		game.playSound("villagerdeath.mp3");
 		game.allies.splice(i, 1);
 		i--;
-		game.score--;
+		game.tempScore--;
 	    }
 	};
     }

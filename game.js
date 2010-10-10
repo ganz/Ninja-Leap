@@ -76,7 +76,7 @@ Game.prototype.init = function() {
 
     this.levelIndex = 0;
 
-//    game.levels= [game.levels[0], game.levels[1]];
+//    game.levels= [game.levels[1], game.levels[2]];
 
     this.loadSound("dash.mp3");
     this.loadSound("enemydeath.mp3");
@@ -164,6 +164,10 @@ function TitleMode() {
 TitleMode.prototype.init = function() {
     game.player.x = 300;
     game.player.y = 200;
+    game.allies = [];
+    game.enemies = [];
+    var enemy = new Enemy(400, 200);
+    game.enemies.push(enemy);
 };
 
 TitleMode.prototype.draw = function() {
@@ -181,6 +185,7 @@ TitleMode.prototype.draw = function() {
 };
 
 TitleMode.prototype.tick = function() {
+    game.player.tick();
     this.draw();
     if (game.keyMap[KEYS.ENTER]) {
 	game.gameMode.init();
@@ -212,7 +217,7 @@ GameOverMode.prototype.draw = function() {
 	context.fillText(game.gameoverReason, 100, 200);
     }
 
-    context.fillText("Your honor score was: " + (game.score + game.gameMode.tempScore), 100, 230);
+    context.fillText("Honor score reset to: " + (game.score + game.gameMode.tempScore), 100, 230);
     context.fillText("Press [enter] to play again", 100, 290);
     context.shadowColor = "transparent";
 };
@@ -329,7 +334,7 @@ GameMode.prototype.draw = function() {
     context.fillStyle = "#000";
     context.font = "bold 16px sans-serif";
     context.fillText("Honor: " + (game.score + this.tempScore), 10, 20);
-    context.fillText("Kills: " + this.kills + " of " + game.levels[game.levelIndex].neededKills,
+    context.fillText("Enemies left: " +  (game.levels[game.levelIndex].neededKills - this.kills),
 		     10, 40);
     game.player.draw(context);
 
@@ -535,11 +540,13 @@ GameMode.prototype.tick = function() {
 };
 
 
-function FadingMessage(msg, size, expiration, position) {
+function FadingMessage(msg, size, expiration, position, color, shadow) {
     this.msg = msg;
     this.size = size;
     this.expiration = expiration;
     this.position = position;
+    this.color = color;
+    this.shadow = shadow
 };
 
 FadingMessage.prototype.draw = function(context) {
@@ -547,10 +554,23 @@ FadingMessage.prototype.draw = function(context) {
     var fractionLeft = secondsLeft / 1.0;
     fractionLeft = Math.min(fractionLeft, 1.0);
 
+    if (this.shadow) {
+	context.shadowOffsetX = 0;
+	context.shadowOffsetY = 0;
+	context.shadowBlur = 10;
+	context.shadowColor = '#555';
+    }
+
     context.globalAlpha = fractionLeft;
-    context.fillStyle = "#FFF";
+    context.fillStyle = (this.color) ? this.color : "#FFF";
+
     context.font = "bold " + this.size + "px sans-serif";
     context.fillText(this.msg, this.position.x, this.position.y);
+
+    if (this.shadow) {
+	context.shadowColor = "transparent";
+    }
+
     context.globalAlpha = 1.0;
 };
 
