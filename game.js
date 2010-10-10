@@ -229,12 +229,31 @@ GameMode.prototype.tick = function() {
 	}
     }
 
-    if (game.ticks % (TICKS_PER_SECOND / 10) == 0 && game.enemies.length > 0) {
+    if (game.ticks % (TICKS_PER_SECOND / 2) == 0 && game.enemies.length > 0) {
 	var ally = game.allies[parseInt(Math.random() * game.allies.length)];
-	var enemy = game.enemies[parseInt(Math.random() * game.enemies.length)];
+
+	var nearestDist = 9999999;
+	var nearestEnemy = null;
+	var centerPos = new Position(320, 240);
+	for (var i = 0; i < game.enemies.length; i++) {
+	    var dist = centerPos.dist(game.enemies[i].position);
+	    if (dist < nearestDist) {
+		nearestDist = dist;
+		nearestEnemy = game.enemies[i];
+	    }
+	}
+
+	var DIST_TO_SHOOT_AT_ENEMY = 225;
+	if (nearestDist > DIST_TO_SHOOT_AT_ENEMY) {
+	    return;
+	}
+
+	var enemy = nearestEnemy;
 
 	var start = new Position(ally.position.x, ally.position.y);
-	var target = new Position(enemy.position.x, enemy.position.y);
+	var jitter = 40;
+	var target = new Position(enemy.position.x + Math.random() * jitter - jitter / 2,
+				  enemy.position.y + Math.random() * jitter - jitter / 2);
 	var arrow = new Arrow(start, target);
 	game.projectiles.push(arrow);
     }
@@ -242,6 +261,12 @@ GameMode.prototype.tick = function() {
     game.movePlayer();
 
     for (var i = 0; i < game.projectiles.length; i++) {
+	if (game.projectiles[i].age >= 600) {
+	    game.projectiles.splice(i, 1);
+	    i--;
+	    continue;
+	}
+
 	var projectile = game.projectiles[i];
 	projectile.tick();
 

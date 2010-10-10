@@ -56,6 +56,7 @@ function Arrow(pos, target) {
     this.position = pos;
     this.target = target;
     this.active = true;
+    this.age = 0;
 
     var dx = this.position.x - this.target.x;
     var dy = this.position.y - this.target.y;
@@ -67,6 +68,10 @@ function Arrow(pos, target) {
 };
 
 Arrow.prototype.tick = function() {
+    if (this.age > 600) {
+	return;
+    }
+    this.age++;
     if (this.position.x == this.target.x &&
 	this.position.y == this.target.y) {
 	this.active = false
@@ -79,6 +84,7 @@ Arrow.prototype.tick = function() {
 };
 
 Arrow.prototype.draw = function(context, x, y) {    
+    context.globalAlpha = 1 - this.age / 600;
     context.strokeStyle = "#000000";
     context.fillStyle = "#333";
     context.beginPath();
@@ -86,9 +92,11 @@ Arrow.prototype.draw = function(context, x, y) {
 
     context.lineTo(this.position.x + this.tailOffsetX,
 		   this.position.y + this.tailOffsetY);
-//    context.arc(this.position.x,this.position.y,5,0,Math.PI*2,true);
-    context.lineWidth = 1
     context.closePath();
     context.stroke();
+
+    context.arc(this.target.x,this.target.y,2,0,Math.PI*2,true);
+    context.lineWidth = 1
     context.fill();
+    context.globalAlpha = 1.0;
 };
