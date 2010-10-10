@@ -318,14 +318,17 @@ GameMode.prototype.draw = function() {
 	    if (y < -enemy.size) y = 0;
 	    if (x > 640 + enemy.size) x = 640;
 	    if (y > 480 + enemy.size) y = 480;
-	    //enemy.draw(context, x, y, 10, "#F00");
 	    context.fillStyle = "red";
 	    context.strokeStyle = "red";
 	    context.shadowBlur = 5;
 	    context.shadowColor = "red";
 	    context.beginPath();
 	    var dist = centerPos.dist(enemy.position);
-	    context.arc(x, y, dist / 15, 0, Math.PI * 2, true);
+
+	    var visDist = dist + enemy.size;
+	    context.arc(x, y, 0.7 * visDist / 15 * (enemy.size * enemy.size / 225), 0, Math.PI * 2, true);
+
+
 	    context.closePath();
 	    context.fill();
 	    //context.stroke();
