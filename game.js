@@ -80,12 +80,16 @@ Game.prototype.init = function() {
 
     this.levelIndex = 0;
 
-//    game.levels= [game.levels[1], game.levels[2]];
+    //game.levels= [game.levels[0]];
 
     this.loadSound("dash.mp3");
     this.loadSound("enemydeath.mp3");
     this.loadSound("villagerdeath.mp3");
     this.loadSound("arrow.mp3");
+    this.loadSound("playerdeath.mp3");
+    this.loadSound("arrowhit.mp3");
+    this.loadSound("barbarhit.mp3");
+    this.loadSound("youwin.mp3");
 
     this.titleMode = new TitleMode();
     this.titleMode.init();
@@ -176,7 +180,6 @@ TitleMode.prototype.init = function() {
 };
 
 TitleMode.prototype.draw = function() {
-    console.info(game.player.position.x);
     var context = game.getContext();
     game.drawBackground(context);
     context.fillStyle = "#FFF";
@@ -431,6 +434,7 @@ GameMode.prototype.spawnRate = function() {
 
 GameMode.prototype.tick = function() {
     if (game.gameover) {
+	game.playSound("playerdeath.mp3");
 	game.activeMode = game.gameOverMode;
 	return;
     }
@@ -441,6 +445,7 @@ GameMode.prototype.tick = function() {
 	    game.levelIndex++;
 	    this.init();
 	} else {
+	    game.playSound("youwin.mp3");
 	    game.activeMode = game.winMode;
 	}
     }
@@ -509,6 +514,7 @@ GameMode.prototype.tick = function() {
 	    var enemy = game.enemies[j];
 	    if (projectile.position.dist(enemy.position) <= enemy.size) {
 		if (enemy.hit("arrow")) {
+		    game.playSound("arrowhit.mp3");
 		    game.enemies.splice(j, 1);
 		    i--;
 		    this.kills++;
@@ -518,6 +524,7 @@ GameMode.prototype.tick = function() {
 
 	if (!game.player.dashPosition && game.player.position.dist(projectile.position)
 	    <= game.player.size - PLAYER_COLLISION_SAFETY) {
+	    game.playSound("arrowhit.mp3");
 	    game.gameover = true;
 	    game.gameoverReason = "You have been slain by the villagers.";
 	}

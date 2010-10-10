@@ -80,6 +80,7 @@ Barbar.prototype.draw = function(context, x, y, width, fillColor) {
 // returns true if dead, false if not dead
 Barbar.prototype.hit = function(hitter, dashIndex) {
     if (hitter == "player" && dashIndex > this.lastDashHitBy) {
+	game.playSound("barbarhit.mp3");
 	this.hitpoints--;
 	this.lastDashHitBy = dashIndex;
     }
