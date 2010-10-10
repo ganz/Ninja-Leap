@@ -166,15 +166,17 @@ function TitleMode() {
 };
 
 TitleMode.prototype.init = function() {
-    game.player.x = 300;
-    game.player.y = 200;
+    console.info(game.player.position.x);
+    game.player.position.x = 115;
+    game.player.position.y = 200;
     game.allies = [];
     game.enemies = [];
-    var enemy = new Enemy(400, 200);
-    game.enemies.push(enemy);
+    this.enemy = new Enemy(200, 200);
+    game.enemies.push(this.enemy);
 };
 
 TitleMode.prototype.draw = function() {
+    console.info(game.player.position.x);
     var context = game.getContext();
     game.drawBackground(context);
     context.fillStyle = "#FFF";
@@ -184,14 +186,24 @@ TitleMode.prototype.draw = function() {
     context.font = "bold 22px sans-serif";
 
     context.fillText("WASD to move, click to ninja leap", 100, 260);
-    context.fillText("Press [enter] to play", 100, 300);
+    context.fillText("[ninja leap] through the enemy to start", 100, 300);
+
+    game.drawRetical(context);
+
+    for (var i = 0; i < game.enemies.length; i++) {
+	var enemy = game.enemies[i];
+	enemy.draw(context, enemy.position.x, enemy.position.y, 10);
+    }
+
     game.player.draw(context);
 };
 
 TitleMode.prototype.tick = function() {
     game.player.tick();
     this.draw();
-    if (game.keyMap[KEYS.ENTER]) {
+    if (game.enemies.length == 0) {
+	game.player.position.moveTowards(game.player.dashPosition, 20);
+	game.player.dashPosition = null;
 	game.gameMode.init();
 	game.activeMode = game.gameMode;
     }
@@ -260,8 +272,6 @@ GameMode.prototype.init = function() {
     this.tempScore = 0;
 
     this.superSpawnThreshold = 20;
-    this.spawnEnemy(game.levels[game.levelIndex]);
-
 //    document.body.style.cursor = "none";
 
 
@@ -269,12 +279,16 @@ GameMode.prototype.init = function() {
 	new FadingMessage(game.levels[game.levelIndex].title, 
 			  32,
 			  game.ticks + TICKS_PER_SECOND * 2, 
-			  new Position(100, 170)));
+			  new Position(220, 100),
+			  "#FFF",
+			  true));
     game.fadingMessages.push(
 	new FadingMessage(game.levels[game.levelIndex].description, 
 			  24,
 			  game.ticks + TICKS_PER_SECOND * 2, 
-			  new Position(100, 250)));
+			  new Position(220, 130),
+			  "#FFF",
+			  true));
 };
 
 GameMode.prototype.draw = function() {
@@ -282,10 +296,13 @@ GameMode.prototype.draw = function() {
     game.drawBackground(context);
     game.drawVillage(context);
 
+
     for (var i = 0; i < game.allies.length; i++) {
 	var ally = game.allies[i];
 	ally.draw(context, ally.position.x, ally.position.y);
     }
+
+    game.drawRetical(context);
 
     for (var i = 0; i < game.projectiles.length; i++) {
 	var projectile = game.projectiles[i];
@@ -305,14 +322,17 @@ GameMode.prototype.draw = function() {
 	    if (y < -enemy.size) y = 0;
 	    if (x > 640 + enemy.size) x = 640;
 	    if (y > 480 + enemy.size) y = 480;
-	    //enemy.draw(context, x, y, 10, "#F00");
 	    context.fillStyle = "red";
 	    context.strokeStyle = "red";
 	    context.shadowBlur = 5;
 	    context.shadowColor = "red";
 	    context.beginPath();
 	    var dist = centerPos.dist(enemy.position);
-	    context.arc(x, y, dist / 15, 0, Math.PI * 2, true);
+
+	    var visDist = dist + enemy.size;
+	    context.arc(x, y, 0.7 * visDist / 15 * (enemy.size * enemy.size / 225), 0, Math.PI * 2, true);
+
+
 	    context.closePath();
 	    context.fill();
 	    //context.stroke();
@@ -341,8 +361,9 @@ GameMode.prototype.draw = function() {
     context.fillText("Enemies left: " +  (game.levels[game.levelIndex].neededKills - this.kills),
 		     10, 40);
     game.player.draw(context);
+};
 
-    // draw a sword cursor at the mouse position
+Game.prototype.drawRetical = function(context) {
     context.globalAlpha = 0.5;
     context.strokeStyle = "red";
     context.lineWidth = 4;
@@ -366,15 +387,6 @@ GameMode.prototype.draw = function() {
     context.fill();
 
     context.globalAlpha = 1.0;
-
-    /*
-    context.shadowOffsetX = 0;
-    context.shadowOffsetY = 0;
-    context.shadowBlur = 6;
-    context.shadowColor = "black";
-    context.drawImage(game.swordCursor, game.mousePos.x - 13, game.mousePos.y - 13, 26, 26);
-    context.shadowColor = "transparent";
-    */
 };
 
 GameMode.prototype.spawnEnemy = function(level) {
