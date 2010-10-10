@@ -25,7 +25,6 @@ function Game() {
 };
 
 Game.prototype.init = function() {
-    this.sounds = {};
     this.loadSound("dash.mp3", 10);
     this.loadSound("enemyDeath.mp3", 10);
     this.loadSound("villagerDeath.mp3", 10);
@@ -56,22 +55,12 @@ Game.prototype.init = function() {
     setInterval(function() { thiz.tick() }, 1000 / TICKS_PER_SECOND);
 };
 
-Game.prototype.loadSound = function(filename, numInstances) {
-    this.sounds[filename] = {};
-    this.sounds[filename]["sounds"] = [];
-    this.sounds[filename]["index"] = 0;
-    
-    for (var i = 0; i < numInstances; i++) {
-	this.sounds[filename]["sounds"][i] = new Audio("sounds/" + filename);
-    }
+Game.prototype.loadSound = function(filename) {
+    document["PlaySound"].loadSound(filename);
 };
 
 Game.prototype.playSound = function(filename) {
-    var index = this.sounds[filename]["index"];
-    var sounds = this.sounds[filename]["sounds"];
-    sounds[index].play();
-    var newIndex = (index + 1) % sounds.length;
-    this.sounds[filename]["index"] = newIndex;
+    document["PlaySound"].playSound(filename);
 }
 
 function TitleMode() {
@@ -421,4 +410,6 @@ Game.prototype.draw = function() {
 //};
 
 var game = new Game();
-game.init();
+function init() {
+    game.init();
+}
