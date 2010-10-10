@@ -21,15 +21,17 @@ function Game() {
 
     this.villageSprite = new Image();
     this.villageSprite.src = "images/village.png";
-
 };
 
 Game.prototype.init = function() {
+    this.score = 0;
+    this.fadingMessages = [];
+
     this.levels = [];
     var level = new Level();
     level.title = "Day One";
     level.description = "Fight!";
-    level.targetHonor = 5;
+    level.neededKills = 5;
     level.archerShootRate = TICKS_PER_SECOND * 2;
     level.enemySpawnRate = TICKS_PER_SECOND * 4;
     this.levels.push(level);
@@ -37,7 +39,7 @@ Game.prototype.init = function() {
     level = new Level();
     level.title = "Day Two";
     level.description = "Fight harder!";
-    level.targetHonor = 10;
+    level.neededKills = 10;
     level.archerShootRate = TICKS_PER_SECOND;
     level.enemySpawnRate = TICKS_PER_SECOND * 2;
     this.levels.push(level);
@@ -45,7 +47,7 @@ Game.prototype.init = function() {
     level = new Level();
     level.title = "Day Three";
     level.description = "Fight!  Do it!";
-    level.targetHonor = 20;
+    level.neededKills = 20;
     level.archerShootRate = TICKS_PER_SECOND * 0.5;
     level.enemySpawnRate = TICKS_PER_SECOND;
     this.levels.push(level);
@@ -53,7 +55,7 @@ Game.prototype.init = function() {
     level = new Level();
     level.title = "Day Four";
     level.description = "Finish him!  And him!"
-    level.targetHonor = 40;
+    level.neededKills = 40;
     level.archerShootRate = TICKS_PER_SECOND * 0.25;
     level.enemySpawnRate = TICKS_PER_SECOND * 0.8;
     this.levels.push(level);
@@ -61,12 +63,14 @@ Game.prototype.init = function() {
     level = new Level();
     level.title = "Last Day";
     level.description = "Time to flip out!";
-    level.targetHonor = 60;
+    level.neededKills = 60;
     level.archerShootRate = TICKS_PER_SECOND * 0.125;
     level.enemySpawnRate = TICKS_PER_SECOND * 0.6;
     this.levels.push(level);
 
     this.levelIndex = 0;
+
+    game.levels= [game.levels[0], game.levels[1]];
 
     this.loadSound("dash.mp3");
     this.loadSound("enemydeath.mp3");
@@ -137,9 +141,11 @@ WinMode.prototype.draw = function() {
 
     context.font = "bold 22px sans-serif";
 
-    context.fillText("You are the greatest ninja ever.", 100, 230);
-    context.fillText("You have eternal honor.", 100, 260);
-    context.fillText("The villagers apologize for the arrows.", 100, 290);
+
+    context.fillText("You earned " + game.score + " honor.", 100, 230);
+    context.fillText("You are the greatest ninja ever.", 100, 260);
+    context.fillText("Your honor is eternal.", 100, 290);
+    context.fillText("The villagers apologize for the arrows.", 100, 320);
 
     game.player.draw(context);
 };
@@ -202,7 +208,7 @@ GameOverMode.prototype.draw = function() {
 	context.fillText(game.gameoverReason, 100, 200);
     }
 
-    context.fillText("Your honor score was: " + game.score, 100, 230);
+    context.fillText("Your honor score was: " + (game.score + game.gameMode.tempScore), 100, 230);
     context.fillText("Press [enter] to play again", 100, 290);
     context.shadowColor = "transparent";
 };
@@ -223,9 +229,10 @@ GameMode.prototype.init = function() {
     game.enemies = [];
     game.projectiles = [];
     game.allies = [];
-    game.score = 0;
+    game.fadingMessages = []
+//    game.score = 0;
     game.gameover = false;
-    game.player.dashPosition = null;
+    game.player.comboCounter = 0;
     game.ticks = 0;
 
     game.allies.push(new Ally(280, 210));
@@ -236,11 +243,25 @@ GameMode.prototype.init = function() {
     game.allies.push(new Ally(355, 230));
 
 
-    this.showLevelInfoExpiration = TICKS_PER_SECOND * 3;
+    this.kills = 0;
+    this.tempScore = 0;
+
     this.superSpawnThreshold = 20;
     this.spawnEnemy();
 
     document.body.style.cursor = "none";
+
+
+    game.fadingMessages.push(
+	new FadingMessage(game.levels[game.levelIndex].title, 
+			  32,
+			  game.ticks + TICKS_PER_SECOND * 2, 
+			  new Position(100, 170)));
+    game.fadingMessages.push(
+	new FadingMessage(game.levels[game.levelIndex].description, 
+			  24,
+			  game.ticks + TICKS_PER_SECOND * 2, 
+			  new Position(100, 250)));
 };
 
 GameMode.prototype.draw = function() {
@@ -288,19 +309,24 @@ GameMode.prototype.draw = function() {
 	}
     }
 
-    if (game.ticks < this.showLevelInfoExpiration && game.activeMode == this) {
-	context.fillStyle = "#FFF";
-	context.font = "bold 32px sans-serif";
-	context.fillText(game.levels[game.levelIndex].title, 100, 170);	
-
-	context.font = "bold 24px sans-serif";
-	context.fillText(game.levels[game.levelIndex].description, 100, 250);	
+    if (game.activeMode == this) {
+	for (var i = 0; i < game.fadingMessages.length; i++) {
+	    var msg = game.fadingMessages[i];
+	    if (msg.expiration <= game.ticks) {
+		game.fadingMessages.splice(i, 1);
+		i--;
+		continue;
+	    }
+	    msg.draw(context);
+	}
     }
+
 
     context.fillStyle = "#000";
     context.font = "bold 16px sans-serif";
-    context.fillText("Honor: " + game.score + " of " + game.levels[game.levelIndex].targetHonor,
-		     10, 20);
+    context.fillText("Honor: " + (game.score + this.tempScore), 10, 20);
+    context.fillText("Kills: " + this.kills + " of " + game.levels[game.levelIndex].neededKills,
+		     10, 40);
     game.player.draw(context);
 
     // draw a sword cursor at the mouse position
@@ -364,8 +390,8 @@ GameMode.prototype.tick = function() {
 	return;
     }
 
-//    console.info(game.score, game.levels[game.levelIndex].targetHonor, game.levelIndex);
-    if (game.score >= game.levels[game.levelIndex].targetHonor) {
+    if (this.kills >= game.levels[game.levelIndex].neededKills) {
+	game.score += this.tempScore;
 	if (game.levelIndex < game.levels.length - 1) {
 	    game.levelIndex++;
 	    this.init();
@@ -380,7 +406,7 @@ GameMode.prototype.tick = function() {
     }
 
     // Spawn N extra enemies after M kills
-    if (game.score > this.superSpawnThreshold) {
+    if (this.kills > this.superSpawnThreshold) {
 	this.superSpawnThreshold += 20;
 	for(var i = 0; i < 4; i++) {
 	    this.spawnEnemy()
@@ -439,6 +465,7 @@ GameMode.prototype.tick = function() {
 	    if (projectile.position.dist(enemy.position) <= enemy.size) {
 		game.enemies.splice(j, 1);
 		i--;
+		this.kills++;
 	    }
 	}
 
@@ -480,6 +507,25 @@ GameMode.prototype.tick = function() {
     this.draw();
 };
 
+
+function FadingMessage(msg, size, expiration, position) {
+    this.msg = msg;
+    this.size = size;
+    this.expiration = expiration;
+    this.position = position;
+};
+
+FadingMessage.prototype.draw = function(context) {
+    var secondsLeft = (this.expiration - game.ticks) / TICKS_PER_SECOND;
+    var fractionLeft = secondsLeft / 1.0;
+    fractionLeft = Math.min(fractionLeft, 1.0);
+
+    context.globalAlpha = fractionLeft;
+    context.fillStyle = "#FFF";
+    context.font = "bold " + this.size + "px sans-serif";
+    context.fillText(this.msg, this.position.x, this.position.y);
+    context.globalAlpha = 1.0;
+};
 
 Game.prototype.tick = function() {
     this.activeMode.tick();

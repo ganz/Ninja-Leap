@@ -65,6 +65,7 @@ Position.prototype.moveTowards = function(position, magnitude) {
 };
 
 function Ninja(x, y) {
+    this.comboCounter = 0;
     this.position = new Position(x, y);
     this.prevPosition = this.position;
 
@@ -99,6 +100,7 @@ Ninja.prototype.tick = function() {
 	if (this.position.dist(this.dashPosition) < PLAYER_DASH_SPEED) {
 	    this.position = this.dashPosition;
 	    this.dashPosition = null;
+	    this.comboCounter = 0;
 	} else {
 	    this.position.moveTowards(this.dashPosition, PLAYER_DASH_SPEED);
 	}
@@ -109,7 +111,16 @@ Ninja.prototype.tick = function() {
 		game.playSound("enemydeath.mp3");
 		game.enemies.splice(i, 1);
 		i--;
-		game.score++;
+		game.gameMode.tempScore += 1 + this.comboCounter;
+		game.gameMode.kills++;
+		this.comboCounter++;
+		console.info("WRITE A MESSAGE");
+		game.fadingMessages.push(
+		    new FadingMessage(this.comboCounter + "x",
+				      16,
+				      game.ticks + TICKS_PER_SECOND * 1, 
+				      new Position(enemy.position.x - enemy.size / 2,
+						   enemy.position.y + enemy.size / 4)));
 	    }
 	};
 	for (var i = 0; i < game.allies.length; i++) {
