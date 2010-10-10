@@ -50,6 +50,7 @@ function Barbar(x, y) {
     this.time = new Date().getTime();
 
     this.hitpoints = 2;
+    this.lastDashHitBy = -1;
 };
 
 Barbar.prototype.tick = function() {
@@ -78,8 +79,9 @@ Barbar.prototype.draw = function(context, x, y, width, fillColor) {
 //   indicates which dash is hitting, so we can ignore multiple hits from the same dash
 // returns true if dead, false if not dead
 Barbar.prototype.hit = function(hitter, dashIndex) {
-    if (hitter == "player") {
+    if (hitter == "player" && dashIndex > this.lastDashHitBy) {
 	this.hitpoints--;
+	this.lastDashHitBy = dashIndex;
     }
     if (this.hitpoints <= 0) {
 	return true;
