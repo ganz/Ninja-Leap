@@ -24,6 +24,23 @@ function Game() {
 };
 
 Game.prototype.init = function() {
+    this.levels = [];
+    var level = new Level();
+    level.title = "Day One";
+    level.description = "The seige against your village begins.  Save them!";
+    level.targetHonor = 5;
+    level.enemySpawnRate = TICKS_PER_SECOND * 5;
+    this.levels.push(level);
+
+    level = new Level();
+    level.title = "Day Two";
+    level.description = "Holy shit this is rediculous!";
+    level.targetHonor = 5000;
+    level.enemySpawnRate = TICKS_PER_SECOND / 20;
+    this.levels.push(level);
+
+    this.levelIndex = 0;
+
     this.titleMode = new TitleMode();
     this.titleMode.init();
     this.activeMode = this.titleMode;
@@ -46,6 +63,9 @@ Game.prototype.init = function() {
 
     setInterval(function() { thiz.tick() }, 1000 / TICKS_PER_SECOND);
 };
+
+function Level() {
+}
 
 function TitleMode() {
 };

@@ -1,7 +1,10 @@
-- villagers only shoot if enemy is close to village
+Level
+	- specifies enemy spawn rate
+	- specifies number of villagers?
+	- specifies village shoot rate
+	- specifies enemy move rate?
+	- specifies target honor
 
-
-Arrow despawns if off screen by X
 
 High score list
 Local storage high score list
