@@ -282,6 +282,7 @@ GameMode.prototype.tick = function() {
 	var target = new Position(enemy.position.x + Math.random() * jitter - jitter / 2,
 				  enemy.position.y + Math.random() * jitter - jitter / 2);
 	var arrow = new Arrow(start, target);
+	game.playSound("arrow.mp3");
 	game.projectiles.push(arrow);
     }
 
