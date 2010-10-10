@@ -71,7 +71,7 @@ Game.prototype.init = function() {
 
     this.levelIndex = 0;
 
-    game.levels= [game.levels[0], game.levels[1]];
+//    game.levels= [game.levels[0], game.levels[1]];
 
     this.loadSound("dash.mp3");
     this.loadSound("enemydeath.mp3");
@@ -495,7 +495,8 @@ GameMode.prototype.tick = function() {
     for (var i = 0; i < game.enemies.length; i++) {
 	var enemy = game.enemies[i];
 	enemy.tick();
-	if (enemy.position.dist(game.player.position) <=
+	if (!game.player.dashPosition && 
+	    enemy.position.dist(game.player.position) <=
 	    (enemy.size + game.player.size - PLAYER_COLLISION_SAFETY)) {
 	    game.gameover = true;
 	    game.gameoverReason = "You have been slain by an enemy.";
