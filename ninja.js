@@ -70,6 +70,7 @@ function Ninja(x, y) {
     this.prevPosition = this.position;
 
     this.dashPosition = null;
+    this.dashIndex = 0;
     this.size = 12;
 
     this.frames = [];
@@ -93,6 +94,7 @@ function Ninja(x, y) {
 Ninja.prototype.dash = function(position) {
     this.dashPosition = position;
     this.position.moveTowards(this.dashPosition, PLAYER_DASH_SPEED)
+    this.dashIndex++;
 };
 
 Ninja.prototype.tick = function() {
@@ -108,19 +110,21 @@ Ninja.prototype.tick = function() {
 	    var enemy = game.enemies[i];
 	    var dist = this.position.dist(enemy.position);
 	    if (dist <= (this.size + enemy.size + SLASH_WIDTH)) {
-		game.playSound("enemydeath.mp3");
-		game.enemies.splice(i, 1);
-		i--;
-		game.gameMode.tempScore += 1 + this.comboCounter;
-		game.gameMode.kills++;
-		this.comboCounter++;
-		console.info("WRITE A MESSAGE");
-		game.fadingMessages.push(
-		    new FadingMessage(this.comboCounter + "x",
-				      16,
-				      game.ticks + TICKS_PER_SECOND * 1, 
-				      new Position(enemy.position.x - enemy.size / 2,
-						   enemy.position.y + enemy.size / 4)));
+		if (enemy.hit("player", this.dashIndex)) {
+		    game.playSound("enemydeath.mp3");
+		    game.enemies.splice(i, 1);
+		    i--;
+		    game.gameMode.tempScore += 1 + this.comboCounter;
+		    game.gameMode.kills++;
+		    this.comboCounter++;
+		    console.info("WRITE A MESSAGE");
+		    game.fadingMessages.push(
+			new FadingMessage(this.comboCounter + "x",
+					  16,
+					  game.ticks + TICKS_PER_SECOND * 1, 
+					  new Position(enemy.position.x - enemy.size / 2,
+						       enemy.position.y + enemy.size / 4)));
+		}
 	    }
 	};
 	for (var i = 0; i < game.allies.length; i++) {

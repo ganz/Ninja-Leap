@@ -1,6 +1,15 @@
 function Enemy(x, y) {
     this.position = new Position(x, y);
-    this.size = 10;
+    this.size = 15;
+
+    this.frames = [];
+    this.frames[0] = new Image();
+    this.frames[0].src = "images/businessgoblin1.png";
+    this.frames[1] = new Image();
+    this.frames[1].src = "images/businessgoblin2.png";
+    this.frameIndex = 0;
+    this.frameLength = 100;
+    this.time = new Date().getTime();
 };
 
 Enemy.prototype.tick = function() {
@@ -8,30 +17,75 @@ Enemy.prototype.tick = function() {
 };
 
 Enemy.prototype.draw = function(context, x, y, width, fillColor) {
-    context.shadowColor = "#F00";
-    context.shadowBlur = 10;
-    context.strokeStyle = "#330000";
-    if (fillColor) {
-	context.fillStyle = fillColor;
-    } else {
-	context.fillStyle = "#853";
-    }
-    context.beginPath();
-    context.arc(x,y,width,0,Math.PI*2,true);
-    context.lineWidth = 2
-    context.closePath();
-    context.stroke();
-    context.fill();
+    var cornerX = x - this.size;
+    var cornerY = y - this.size;
+    context.drawImage(this.frames[this.frameIndex], cornerX, cornerY,
+		      this.size * 2, this.size * 2);
 
-    // eyes
-    context.fillStyle = "#F00";
-    context.beginPath();
-    context.arc(x - width / 3, y - width / 5, 2, 0, Math.PI * 2, true);
-    context.arc(x + width / 3, y - width / 5, 2, 0, Math.PI * 2, true);
-    context.closePath();
-    context.fill();
-    context.shadowColor = "transparent";
+    var newTime = new Date().getTime();
+    if (newTime - this.time >= this.frameLength) {
+	this.frameIndex = (this.frameIndex + 1) % this.frames.length;
+	this.time = newTime;
+    }
 };
+
+// args: hitter: what hit this enemy?
+//   values: "player", "arrow"
+// returns true if dead, false if not dead
+Enemy.prototype.hit = function(hitter) {
+    return true;
+}
+
+function Barbar(x, y) {
+    this.position = new Position(x, y);
+    this.size = 20;
+
+    this.frames = [];
+    this.frames[0] = new Image();
+    this.frames[0].src = "images/hairybarbar1.png";
+    this.frames[1] = new Image();
+    this.frames[1].src = "images/hairybarbar2.png";
+    this.frameIndex = 0;
+    this.frameLength = 400;
+    this.time = new Date().getTime();
+
+    this.hitpoints = 2;
+};
+
+Barbar.prototype.tick = function() {
+    var centerPosition = new Position(320, 240);
+    this.position.moveTowards(centerPosition, BARBAR_MOVE_SPEED);
+    
+};
+
+Barbar.prototype.draw = function(context, x, y, width, fillColor) {
+    var cornerX = x - this.size;
+    var cornerY = y - this.size;
+    context.drawImage(this.frames[this.frameIndex], cornerX, cornerY,
+		      this.size * 2, this.size * 2);
+
+    var newTime = new Date().getTime();
+    if (newTime - this.time >= this.frameLength) {
+	this.frameIndex = (this.frameIndex + 1) % this.frames.length;
+	this.time = newTime;
+    }
+};
+
+// args: hitter: what hit this enemy?
+//   values: "player", "arrow"
+// optional second arg: dashIndex
+//   required if hitter == "player"
+//   indicates which dash is hitting, so we can ignore multiple hits from the same dash
+// returns true if dead, false if not dead
+Barbar.prototype.hit = function(hitter, dashIndex) {
+    if (hitter == "player") {
+	this.hitpoints--;
+    }
+    if (this.hitpoints <= 0) {
+	return true;
+    }
+    return false;
+}
 
 function Ally(x, y) {
     this.position = new Position(x, y);
@@ -62,6 +116,8 @@ Ally.prototype.draw = function(context, x, y) {
 	this.time = newTime;
     }
 };
+
+
 
 function Arrow(pos, target) {
     this.position = pos;
