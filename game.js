@@ -9,6 +9,7 @@ PLAYER_COLLISION_SAFETY = 3;
 PLAYER_DASH_SPEED = 15;
 PLAYER_MOVE_SPEED = 4;
 ENEMY_MOVE_SPEED = 2;
+BARBAR_MOVE_SPEED = 1;
 
 TICKS_PER_SECOND = 60;
 
@@ -28,7 +29,7 @@ Game.prototype.init = function() {
     this.levels = [];
     var level = new Level();
     level.title = "Day One";
-    level.description = "Fight!";
+    level.description = "Protect the village!";
     level.targetHonor = 5;
     level.archerShootRate = TICKS_PER_SECOND * 2;
     level.enemySpawnRate = TICKS_PER_SECOND * 4;
@@ -36,7 +37,7 @@ Game.prototype.init = function() {
 
     level = new Level();
     level.title = "Day Two";
-    level.description = "Fight harder!";
+    level.description = "Save those villagers!";
     level.targetHonor = 10;
     level.archerShootRate = TICKS_PER_SECOND;
     level.enemySpawnRate = TICKS_PER_SECOND * 2;
@@ -44,7 +45,7 @@ Game.prototype.init = function() {
 
     level = new Level();
     level.title = "Day Three";
-    level.description = "Fight!  Do it!";
+    level.description = "Defeat all invaders!";
     level.targetHonor = 20;
     level.archerShootRate = TICKS_PER_SECOND * 0.5;
     level.enemySpawnRate = TICKS_PER_SECOND;
@@ -52,7 +53,7 @@ Game.prototype.init = function() {
 
     level = new Level();
     level.title = "Day Four";
-    level.description = "Finish him!  And him!"
+    level.description = "Defense! Defense!"
     level.targetHonor = 40;
     level.archerShootRate = TICKS_PER_SECOND * 0.25;
     level.enemySpawnRate = TICKS_PER_SECOND * 0.8;
@@ -60,7 +61,7 @@ Game.prototype.init = function() {
 
     level = new Level();
     level.title = "Last Day";
-    level.description = "Time to flip out!";
+    level.description = "Final Wave! Time to flip out!";
     level.targetHonor = 60;
     level.archerShootRate = TICKS_PER_SECOND * 0.125;
     level.enemySpawnRate = TICKS_PER_SECOND * 0.6;
@@ -304,23 +305,38 @@ GameMode.prototype.draw = function() {
     game.player.draw(context);
 
     // draw a sword cursor at the mouse position
-    /*
-    context.fillStyle = "white";
-    context.strokeStyle = "black";
+    context.globalAlpha = 0.5;
+    context.strokeStyle = "red";
+    context.lineWidth = 4;
+
     context.beginPath();
-    context.arc(game.mousePos.x, game.mousePos.y, 20, 0, Math.PI * 2, true);
+    context.arc(game.mousePos.x, game.mousePos.y, 16, 0, Math.PI * 2, true);
     context.closePath();
-    context.globalAlpha = 0.2;
+    context.fillStyle = "white";
     context.fill();
-    context.globalAlpha = 1.0;
     context.stroke();
-    */
+
+    context.beginPath();
+    context.arc(game.mousePos.x, game.mousePos.y, 9, 0, Math.PI * 2, true);
+    context.closePath();
+    context.stroke();
+
+    context.beginPath();
+    context.arc(game.mousePos.x, game.mousePos.y, 4, 0, Math.PI * 2, true);
+    context.closePath();
+    context.fillStyle = "red";
+    context.fill();
+
+    context.globalAlpha = 1.0;
+
+    /*
     context.shadowOffsetX = 0;
     context.shadowOffsetY = 0;
     context.shadowBlur = 6;
     context.shadowColor = "black";
     context.drawImage(game.swordCursor, game.mousePos.x - 13, game.mousePos.y - 13, 26, 26);
     context.shadowColor = "transparent";
+    */
 };
 
 GameMode.prototype.spawnEnemy = function() {
@@ -437,8 +453,10 @@ GameMode.prototype.tick = function() {
 	for (var j = 0; j < game.enemies.length; j++) {
 	    var enemy = game.enemies[j];
 	    if (projectile.position.dist(enemy.position) <= enemy.size) {
-		game.enemies.splice(j, 1);
-		i--;
+		if (enemy.hit("arrow")) {
+		    game.enemies.splice(j, 1);
+		    i--;
+		}
 	    }
 	}
 

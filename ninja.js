@@ -69,6 +69,7 @@ function Ninja(x, y) {
     this.prevPosition = this.position;
 
     this.dashPosition = null;
+    this.dashIndex = 0;
     this.size = 12;
 
     this.frames = [];
@@ -92,6 +93,7 @@ function Ninja(x, y) {
 Ninja.prototype.dash = function(position) {
     this.dashPosition = position;
     this.position.moveTowards(this.dashPosition, PLAYER_DASH_SPEED)
+    this.dashIndex++;
 };
 
 Ninja.prototype.tick = function() {
@@ -106,10 +108,12 @@ Ninja.prototype.tick = function() {
 	    var enemy = game.enemies[i];
 	    var dist = this.position.dist(enemy.position);
 	    if (dist <= (this.size + enemy.size + SLASH_WIDTH)) {
-		game.playSound("enemydeath.mp3");
-		game.enemies.splice(i, 1);
-		i--;
-		game.score++;
+		if (enemy.hit("player", this.dashIndex)) {
+		    game.playSound("enemydeath.mp3");
+		    game.enemies.splice(i, 1);
+		    i--;
+		    game.score++;
+		}
 	    }
 	};
 	for (var i = 0; i < game.allies.length; i++) {
