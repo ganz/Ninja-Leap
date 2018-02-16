@@ -26,7 +26,12 @@ var sounds = {
 };
 
 
-var soundContext = new AudioContext();
+var soundContext;
+if ('AudioContext' in window) {
+    soundContext = new AudioContext();
+} else if ('webkitAudioContext' in window) {
+    soundContext = new webkitAudioContext();
+}
 
 for(var key in sounds) {
   loadSound(key);

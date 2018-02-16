@@ -124,9 +124,15 @@ Game.prototype.init = function() {
 	thiz.keyMap[event.keyCode] = false;
     }
 
-    document.onmousedown = function(event) {
+    var pointerdown = function(x, y) {
 	playSound("dash");
-	thiz.player.dash(new Position(event.x, event.y));
+	thiz.player.dash(new Position(x, y));
+    }
+    document.onmousedown = function(event) {
+	pointerdown(event.x, event.y);
+    }
+    document.ontouchstart = function(event) {
+	pointerdown(event.touches[0].pageX, event.touches[0].pageY);
     }
 
     document.onmousemove = function(event) {
@@ -711,10 +717,8 @@ Game.prototype.draw = function() {
 //Game.prototype.init = function() {
 //};
 
-console.log("what is");
 var game = new Game();
 function init() {
-    console.log("things are happening");
     game.init();
 }
 init();
