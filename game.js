@@ -104,15 +104,6 @@ Game.prototype.init = function() {
 
     //game.levels= [game.levels[0]];
 
-    this.loadSound("dash.mp3");
-    this.loadSound("enemydeath.mp3");
-    this.loadSound("villagerdeath.mp3");
-    this.loadSound("arrow.mp3");
-    this.loadSound("playerdeath.mp3");
-    this.loadSound("arrowhit.mp3");
-    this.loadSound("barbarhit.mp3");
-    this.loadSound("youwin.mp3");
-
     this.titleMode = new TitleMode();
     this.titleMode.init();
     this.activeMode = this.titleMode;
@@ -134,7 +125,7 @@ Game.prototype.init = function() {
     }
 
     document.onmousedown = function(event) {
-	thiz.playSound("dash.mp3");
+	playSound("dash");
 	thiz.player.dash(new Position(event.x, event.y));
     }
 
@@ -147,14 +138,6 @@ Game.prototype.init = function() {
 };
 
 function Level() {
-}
-
-Game.prototype.loadSound = function(filename) {
-    document["PlaySound"].loadSound(filename);
-};
-
-Game.prototype.playSound = function(filename) {
-    document["PlaySound"].playSound(filename);
 }
 
 function WinMode() {
@@ -480,7 +463,7 @@ GameMode.prototype.spawnRate = function() {
 
 GameMode.prototype.tick = function() {
     if (game.gameover) {
-	game.playSound("playerdeath.mp3");
+	playSound("playerdeath");
 	game.activeMode = game.gameOverMode;
 	return;
     }
@@ -492,7 +475,7 @@ GameMode.prototype.tick = function() {
 	    this.init();
 	} else {
 	    game.winMode.init();
-	    game.playSound("youwin.mp3");
+	    playSound("youwin");
 	    game.activeMode = game.winMode;
 	}
     }
@@ -537,7 +520,7 @@ GameMode.prototype.tick = function() {
 	var target = new Position(enemy.position.x + Math.random() * jitter - jitter / 2,
 				  enemy.position.y + Math.random() * jitter - jitter / 2);
 	var arrow = new Arrow(start, target);
-	game.playSound("arrow.mp3");
+	playSound("arrow");
 	game.projectiles.push(arrow);
     }
 
@@ -561,7 +544,7 @@ GameMode.prototype.tick = function() {
 	    var enemy = game.enemies[j];
 	    if (projectile.position.dist(enemy.position) <= enemy.size) {
 		if (enemy.hit("arrow")) {
-		    game.playSound("arrowhit.mp3");
+		    playSound("arrowhit");
 		    game.enemies.splice(j, 1);
 		    i--;
 		    this.kills++;
@@ -571,7 +554,7 @@ GameMode.prototype.tick = function() {
 
 	if (!game.player.dashPosition && game.player.position.dist(projectile.position)
 	    <= game.player.size - PLAYER_COLLISION_SAFETY) {
-	    game.playSound("arrowhit.mp3");
+	    playSound("arrowhit");
 	    game.gameover = true;
 	    game.gameoverReason = "You have been slain by the villagers.";
 	}
@@ -589,7 +572,7 @@ GameMode.prototype.tick = function() {
 	for (var j = 0; j < game.allies.length; j++) {
 	    var ally = game.allies[j];
 	    if (enemy.position.dist(ally.position) < enemy.size + ally.size) {
-		game.playSound("villagerdeath.mp3");
+		playSound("villagerdeath");
 		game.allies.splice(j, 1);
 		j--;
 
@@ -728,7 +711,10 @@ Game.prototype.draw = function() {
 //Game.prototype.init = function() {
 //};
 
+console.log("what is");
 var game = new Game();
 function init() {
+    console.log("things are happening");
     game.init();
 }
+init();

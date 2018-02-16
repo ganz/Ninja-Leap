@@ -111,7 +111,7 @@ Ninja.prototype.tick = function() {
 	    var dist = this.position.dist(enemy.position);
 	    if (dist <= (this.size + enemy.size + SLASH_WIDTH)) {
 		if (enemy.hit("player", this.dashIndex)) {
-		    game.playSound("enemydeath.mp3");
+		    playSound("enemydeath");
 		    game.enemies.splice(i, 1);
 		    i--;
 		    game.gameMode.tempScore += 1 + this.comboCounter;
@@ -133,7 +133,7 @@ Ninja.prototype.tick = function() {
 	    var ally = game.allies[i];
 	    var dist = this.position.dist(ally.position);
 	    if (dist <= (this.size + ally.size)) {
-		game.playSound("villagerdeath.mp3");
+		playSound("villagerdeath");
 		game.allies.splice(i, 1);
 		i--;
 		game.gameMode.tempScore--;
